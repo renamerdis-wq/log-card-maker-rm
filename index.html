@@ -342,7 +342,12 @@
       <div style="display:flex; gap:8px;">
         <button class="btn-reset" onclick="resetAll(event)">🔄</button>
         <button class="btn-save" style="background:#475569; display:none;" onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
-        <button class="btn-save" onclick="event.stopPropagation(); saveImage('origin')">📸 이미지 저장</button>
+        
+        <div style="display:flex; gap:6px;">
+  <button class="btn-save" style="padding: 8px 10px;" onclick="event.stopPropagation(); saveImage(this, 'standard')">📷 기본 저장</button>
+  <button class="btn-save" style="background:#334155; padding: 8px 10px;" onclick="event.stopPropagation(); saveImage(this, 'high')">✨ 고화질 저장</button>
+</div>  
+      
       </div>
     </div>
 
@@ -1558,27 +1563,31 @@ __ __: 글자 1단계 작게
     /* =========================================
        8. Save / Export Functions
        ========================================= */
-    // Image Save: Uses strict styling to prevent layout shifts
-    async function saveImage(mode) {
+    
+        // Image Save: 화질 옵션(quality) 추가 및 버튼 상태 개별 제어
+    async function saveImage(btn, quality) {
         const widthInput = document.getElementById('cardWidthInput');
         const frame = document.querySelector('.card-frame'); 
         const realWidth = parseInt(widthInput.value);
         
-        const btns = document.querySelectorAll('.btn-save');
-        let targetBtn = btns[1]; 
-        const originalText = targetBtn.innerText;
-        targetBtn.innerText = "⏳ 폰트 로딩 중...";
+        // 클릭된 버튼의 텍스트를 잠시 로딩 상태로 변경
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ 폰트 로딩 중...";
 
+        // 폰트 로딩 대기
         try {
             await document.fonts.ready; 
             await new Promise(resolve => setTimeout(resolve, 100)); 
         } catch (e) { console.log(e); }
         
-        targetBtn.innerText = "📸 열심히 찍는 중...";
+        btn.innerText = "📸 열심히 찍는 중...";
+
+        // 화질 설정: 고화질이면 2, 기본이면 1
+        const ratio = (quality === 'high') ? 2 : 1;
 
         htmlToImage.toPng(frame, {
             cacheBust: true,
-            pixelRatio: 1, // High Quality
+            pixelRatio: ratio, // 여기서 화질 결정
             width: realWidth,
             height: frame.scrollHeight, 
             style: {
@@ -1596,17 +1605,22 @@ __ __: 글자 1단계 작게
         })
         .then(dataUrl => {
             const link = document.createElement('a');
-            link.download = getFileName('png');
+            // 파일명에 화질 정보(_HQ 등)를 붙여서 구분
+            const suffix = (quality === 'high') ? '_HQ' : '';
+            link.download = getFileName('png').replace('.png', `${suffix}.png`);
             link.href = dataUrl;
             link.click();
-            targetBtn.innerText = originalText;
+            
+            // 버튼 텍스트 원복
+            setTimeout(() => { btn.innerText = originalText; }, 1000);
         })
         .catch(err => {
             console.error('Capture failed:', err);
             alert("이미지 저장에 실패했습니다. 다시 시도해주세요.");
-            targetBtn.innerText = originalText;
+            btn.innerText = originalText;
         });
     }
+
 
     // HTML Save: Generates standalone HTML with v1.3.5 headers
     function saveHtml() {
