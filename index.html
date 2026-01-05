@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>로그 카드 생성기 v1.3.5</title> <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
+  <title>로그 카드 생성기 v1.4.1</title> <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
   <style>
@@ -263,6 +263,20 @@
     .parsed-h3 { font-size: 1.1em; font-weight: 700; margin: 0 0 var(--para-sp, 1.2em); color: inherit; opacity: 0.9; line-height: inherit; }
     .parsed-hr { border: 0; height: 1px; background: var(--hr-col); margin: 1.5em 0; }
 
+        /* 문자 메시지 스타일 (백틱 ` 사용) */
+    .sms-box {
+        background-color: var(--sms-bg); 
+        color: var(--sms-tx);            
+        border: 1px solid rgba(0,0,0,0.1); /* 테두리는 연하게 고정 */
+        border-radius: 15px;
+        padding: 2px 8px;
+        font-family: 'Pretendard', sans-serif;
+        font-size: 0.97em;
+        display: inline-block;
+        margin: 0 2px;
+        vertical-align: middle;
+    }
+    
     #imgFileInput, #bgImgFileInput, #insertImgFileInput, #presetFileInput { display: none; }
     .editor-img-preview { max-width: 100px; max-height: 100px; border-radius: 6px; border: 1px solid #ddd; }
     
@@ -288,6 +302,37 @@
     input[type="range"]:disabled, 
     input[type="number"]:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
 
+        /* =========================================
+       Ruler Guides (눈금)
+       ========================================= */
+    .ruler-guide {
+        position: absolute;
+        width: 20px;        /* 눈금 길이 */
+        height: 1px;        /* 눈금 두께 */
+        background-color: #94a3b8; /* 눈금 색상 (진한 회색) */
+        z-index: 100;       /* 카드보다 위에 표시 */
+        pointer-events: none; /* 클릭 통과 */
+    }
+    
+    /* 눈금 옆에 붙는 작은 라벨 (1/2, 1/3 등) */
+    .ruler-guide::after {
+        content: attr(data-label);
+        position: absolute;
+        font-size: 10px;
+        font-family: monospace;
+        color: #64748b;
+        top: -6px;
+    }
+
+    /* 왼쪽 눈금 위치 및 라벨 정렬 */
+    .guide-left { left: -25px; }
+    .guide-left::after { right: 25px; } /* 라벨을 눈금 왼쪽에 */
+
+    /* 오른쪽 눈금 위치 및 라벨 정렬 */
+    .guide-right { right: -25px; }
+    .guide-right::after { left: 25px; } /* 라벨을 눈금 오른쪽에 */
+
+    
     /* =========================================
        Responsive: PC Layout (>= 1024px)
        ========================================= */
@@ -338,7 +383,7 @@
     </div>
 
     <div class="editor-header-bar" onclick="toggleEditor()">
-      <div class="editor-title">로그 카드 생성기 v1.3.5</div> 
+      <div class="editor-title">로그 카드 생성기 v1.4.1</div> 
       <div style="display:flex; gap:8px;">
         <button class="btn-reset" onclick="resetAll(event)">🔄</button>
         <button class="btn-save" style="background:#475569; display:none;" onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
@@ -639,6 +684,27 @@
             </div>
         
             <hr class="parsed-hr" style="margin:10px 0;">
+
+          <hr class="parsed-hr" style="margin:10px 0;">
+
+            <div class="style-row">
+                <span>📟 문자 박스(백틱) 배경:</span>
+                <div class="mini-color-row">
+                    <div class="mini-preview" onclick="openPicker('sms_bg', '문자 박스 배경')">
+                        <div id="sms_bg-pv" class="mini-color-layer"></div>
+                    </div>
+                    <input type="text" id="sms_bg-txt" class="mini-input" onchange="setColor('sms_bg',this.value)">
+                </div>
+            </div>
+            <div class="style-row">
+                <span>📟 문자 박스(백틱) 글자:</span>
+                <div class="mini-color-row">
+                    <div class="mini-preview" onclick="openPicker('sms_tx', '문자 박스 글자')">
+                        <div id="sms_tx-pv" class="mini-color-layer"></div>
+                    </div>
+                    <input type="text" id="sms_tx-txt" class="mini-input" onchange="setColor('sms_tx',this.value)">
+                </div>
+            </div>
         
             <div class="style-row">
                 <span>🗨️ 말풍선(좌) 배경:</span>
@@ -689,7 +755,7 @@
       </div>
 
       <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-        © RenaMerdis v1.3.5
+        © RenaMerdis v1.4.1
         <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits" src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f"/></a>
       </div>
 
@@ -721,7 +787,7 @@
     /* =========================================
        1. Data & State Management
        ========================================= */
-    const STORAGE_KEY = 'LogCardv1_3_5_data'; // Updated for v1.3.5 compatibility
+    const STORAGE_KEY = 'LogCardv1_4_1_data'; // Updated for v1.4.1 compatibility
 
     // Default Color Palette
     let colors = { 
@@ -730,43 +796,122 @@
       hlbg:'#e6ccb2', hltx:'#3e2723', 
       th:'#8d6e63', it:'#5d4037', bd:'#3e2723', qt:'#795548',
       bb_l_bg:'#fafafa', bb_l_tx:'#5d4037',
-      bb_r_bg:'#a1887f', bb_r_tx:'#ffffff'
+      bb_r_bg:'#a1887f', bb_r_tx:'#ffffff',
+      sms_bg:'#f1f5f9', sms_tx:'#334155'
     };
 
-    // Preset Data Configuration
+        // Preset Data Configuration
     let presets = [
       // 1. Basic & Natural
-      { name: '크림 라떼', bg1:'#fdfbf7', bg2:'#ede0d4', text:'#4a3b32', hr:'#d7ccc8', hlbg:'#ecd8c5', hltx:'#3e2723', th:'#8d6e63', it:'#5d4037', bd:'#3e2723', qt:'#795548', bb_l_bg:'#fafafa', bb_l_tx:'#5d4037', bb_r_bg:'#a1887f', bb_r_tx:'#ffffff' },
-      { name: '기본 화이트', bg1:'#ffffff', bg2:'#f8fafc', text:'#1e293b', hr:'#e2e8f0', hlbg:'#fef08a', hltx:'#000000', th:'#64748b', it:'#475569', bd:'#0f172a', qt:'#334155', bb_l_bg:'#f1f5f9', bb_l_tx:'#1e293b', bb_r_bg:'#3b82f6', bb_r_tx:'#ffffff' },
+      { 
+        name: '크림 라떼', 
+        bg1:'#fdfbf7', bg2:'#ede0d4', text:'#4a3b32', hr:'#d7ccc8', 
+        hlbg:'#ecd8c5', hltx:'#3e2723', th:'#8d6e63', it:'#5d4037', bd:'#3e2723', qt:'#795548', 
+        bb_l_bg:'#fafafa', bb_l_tx:'#5d4037', bb_r_bg:'#a1887f', bb_r_tx:'#ffffff',
+        sms_bg: '#f3ece4', sms_tx: '#5d4037' // 추가됨
+      },
+      { 
+        name: '기본 화이트', 
+        bg1:'#ffffff', bg2:'#f8fafc', text:'#1e293b', hr:'#e2e8f0', 
+        hlbg:'#fef08a', hltx:'#000000', th:'#64748b', it:'#475569', bd:'#0f172a', qt:'#334155', 
+        bb_l_bg:'#f1f5f9', bb_l_tx:'#1e293b', bb_r_bg:'#3b82f6', bb_r_tx:'#ffffff',
+        sms_bg: '#f1f5f9', sms_tx: '#334155' // 추가됨
+      },
       
       // 2. Emotion & Mood
-      { name: '새벽 감성', bg1:'#a18cd1', bg2:'#fbc2eb', text:'#4a2c58', hr:'#d8b4fe', hlbg:'#e0c3fc', hltx:'#2e1065', th:'#6b4c9a', it:'#5b3c8a', bd:'#2e1065', qt:'#8e44ad', bb_l_bg:'#f3e5f5', bb_l_tx:'#4a148c', bb_r_bg:'#9b59b6', bb_r_tx:'#ffffff' },
-      { name: '노을', bg1:'#fa709a', bg2:'#fee140', text:'#5e2c2c', hr:'#ffb7b2', hlbg:'#ffdac1', hltx:'#8a2be2', th:'#d35400', it:'#c0392b', bd:'#8e44ad', qt:'#e67e22', bb_l_bg:'#fff3e0', bb_l_tx:'#e65100', bb_r_bg:'#ff7043', bb_r_tx:'#ffffff' },
-      { name: '오래된 편지', bg1:'#fdfbf7', bg2:'#f6e6b4', text:'#5d4037', hr:'#d7ccc8', hlbg:'#fff9c4', hltx:'#3e2723', th:'#8d6e63', it:'#795548', bd:'#3e2723', qt:'#5d4037', bb_l_bg:'#fffdeb', bb_l_tx:'#5d4037', bb_r_bg:'#8d6e63', bb_r_tx:'#ffffff', font: "'KoPub World Batang', serif" },
+      { 
+        name: '새벽 감성', 
+        bg1:'#a18cd1', bg2:'#fbc2eb', text:'#4a2c58', hr:'#d8b4fe', 
+        hlbg:'#e0c3fc', hltx:'#2e1065', th:'#6b4c9a', it:'#5b3c8a', bd:'#2e1065', qt:'#8e44ad', 
+        bb_l_bg:'#f3e5f5', bb_l_tx:'#4a148c', bb_r_bg:'#9b59b6', bb_r_tx:'#ffffff',
+        sms_bg: '#f3e5f5', sms_tx: '#4a148c' // 추가됨
+      },
+      { 
+        name: '노을', 
+        bg1:'#fa709a', bg2:'#fee140', text:'#5e2c2c', hr:'#ffb7b2', 
+        hlbg:'#ffdac1', hltx:'#8a2be2', th:'#d35400', it:'#c0392b', bd:'#8e44ad', qt:'#e67e22', 
+        bb_l_bg:'#fff3e0', bb_l_tx:'#e65100', bb_r_bg:'#ff7043', bb_r_tx:'#ffffff',
+        sms_bg: '#fff8e1', sms_tx: '#e65100' // 추가됨
+      },
+      { 
+        name: '오래된 편지', 
+        bg1:'#fdfbf7', bg2:'#f6e6b4', text:'#5d4037', hr:'#d7ccc8', 
+        hlbg:'#fff9c4', hltx:'#3e2723', th:'#8d6e63', it:'#795548', bd:'#3e2723', qt:'#5d4037', 
+        bb_l_bg:'#fffdeb', bb_l_tx:'#5d4037', bb_r_bg:'#8d6e63', bb_r_tx:'#ffffff', font: "'KoPub World Batang', serif",
+        sms_bg: '#fff9c4', sms_tx: '#3e2723' // 추가됨
+      },
       
       // 3. Modern & Chic
-      { name: '어반 그레이', bg1:'#e0ece4', bg2:'#f3f4f6', text:'#2d3436', hr:'#b2bec3', hlbg:'#dfe6e9', hltx:'#000000', th:'#636e72', it:'#2d3436', bd:'#000000', qt:'#b2bec3', bb_l_bg:'#ffffff', bb_l_tx:'#2d3436', bb_r_bg:'#636e72', bb_r_tx:'#ffffff', font: "'Noto Sans KR', sans-serif" },
-      { name: '다크 모드', bg1:'#1a1a1a', bg2:'#2d3436', text:'#dfe6e9', hr:'#636e72', hlbg:'#2d3436', hltx:'#74b9ff', th:'#b2bec3', it:'#dfe6e9', bd:'#ffffff', qt:'#636e72', bb_l_bg:'#2d3436', bb_l_tx:'#dfe6e9', bb_r_bg:'#0984e3', bb_r_tx:'#ffffff' },
+      { 
+        name: '어반 그레이', 
+        bg1:'#e0ece4', bg2:'#f3f4f6', text:'#2d3436', hr:'#b2bec3', 
+        hlbg:'#dfe6e9', hltx:'#000000', th:'#636e72', it:'#2d3436', bd:'#000000', qt:'#b2bec3', 
+        bb_l_bg:'#ffffff', bb_l_tx:'#2d3436', bb_r_bg:'#636e72', bb_r_tx:'#ffffff', font: "'Noto Sans KR', sans-serif",
+        sms_bg: '#dfe6e9', sms_tx: '#2d3436' // 추가됨
+      },
+      { 
+        name: '다크 모드', 
+        bg1:'#1a1a1a', bg2:'#2d3436', text:'#dfe6e9', hr:'#636e72', 
+        hlbg:'#2d3436', hltx:'#74b9ff', th:'#b2bec3', it:'#dfe6e9', bd:'#ffffff', qt:'#636e72', 
+        bb_l_bg:'#2d3436', bb_l_tx:'#dfe6e9', bb_r_bg:'#0984e3', bb_r_tx:'#ffffff',
+        sms_bg: '#2d3436', sms_tx: '#dfe6e9' // 추가됨 (중요: 어두운 배경)
+      },
       
       // 4. Nature
-      { name: '숲속', bg1:'#d4fc79', bg2:'#96e6a1', text:'#1b5e20', hr:'#a5d6a7', hlbg:'#c8e6c9', hltx:'#1b5e20', th:'#2e7d32', it:'#388e3c', bd:'#1b5e20', qt:'#4caf50', bb_l_bg:'#e8f5e9', bb_l_tx:'#1b5e20', bb_r_bg:'#4caf50', bb_r_tx:'#ffffff' },
-      { name: '딥 오션', bg1:'#0f172a', bg2:'#1e3a8a', text:'#e2e8f0', hr:'#3b82f6', hlbg:'#1e40af', hltx:'#ffffff', th:'#94a3b8', it:'#cbd5e1', bd:'#ffffff', qt:'#60a5fa', bb_l_bg:'#1e293b', bb_l_tx:'#e2e8f0', bb_r_bg:'#2563eb', bb_r_tx:'#ffffff' },
+      { 
+        name: '숲속', 
+        bg1:'#d4fc79', bg2:'#96e6a1', text:'#1b5e20', hr:'#a5d6a7', 
+        hlbg:'#c8e6c9', hltx:'#1b5e20', th:'#2e7d32', it:'#388e3c', bd:'#1b5e20', qt:'#4caf50', 
+        bb_l_bg:'#e8f5e9', bb_l_tx:'#1b5e20', bb_r_bg:'#4caf50', bb_r_tx:'#ffffff',
+        sms_bg: '#e8f5e9', sms_tx: '#1b5e20' // 추가됨
+      },
+      { 
+        name: '딥 오션', 
+        bg1:'#0f172a', bg2:'#1e3a8a', text:'#e2e8f0', hr:'#3b82f6', 
+        hlbg:'#1e40af', hltx:'#ffffff', th:'#94a3b8', it:'#cbd5e1', bd:'#ffffff', qt:'#60a5fa', 
+        bb_l_bg:'#1e293b', bb_l_tx:'#e2e8f0', bb_r_bg:'#2563eb', bb_r_tx:'#ffffff',
+        sms_bg: '#1e293b', sms_tx: '#cbd5e1' // 추가됨
+      },
       
       // 5. Pastel
-      { name: '소다', bg1:'#f0f9ff', bg2:'#bae6fd', text:'#0c4a6e', hr:'#7dd3fc', hlbg:'#e0f2fe', hltx:'#0284c7', th:'#0369a1', it:'#075985', bd:'#0c4a6e', qt:'#38bdf8', bb_l_bg:'#f0f9ff', bb_l_tx:'#0c4a6e', bb_r_bg:'#0ea5e9', bb_r_tx:'#ffffff' },
-      { name: '라벤더', bg1:'#f3e8ff', bg2:'#e0e7ff', text:'#4c1d95', hr:'#d8b4fe', hlbg:'#ede9fe', hltx:'#5b21b6', th:'#7c3aed', it:'#6d28d9', bd:'#4c1d95', qt:'#a78bfa', bb_l_bg:'#f5f3ff', bb_l_tx:'#4c1d95', bb_r_bg:'#8b5cf6', bb_r_tx:'#ffffff' },
-      { name: '코지 블라썸', bg1:'#fff0f5', bg2:'#ffe4e9', text:'#5e2c38', hr:'#fbcfe8', hlbg:'#ffe4e6', hltx:'#881337', th:'#be123c', it:'#9f1239', bd:'#881337', qt:'#fb7185', bb_l_bg:'#fff1f2', bb_l_tx:'#881337', bb_r_bg:'#f43f5e', bb_r_tx:'#ffffff' }
+      { 
+        name: '소다', 
+        bg1:'#f0f9ff', bg2:'#bae6fd', text:'#0c4a6e', hr:'#7dd3fc', 
+        hlbg:'#e0f2fe', hltx:'#0284c7', th:'#0369a1', it:'#075985', bd:'#0c4a6e', qt:'#38bdf8', 
+        bb_l_bg:'#f0f9ff', bb_l_tx:'#0c4a6e', bb_r_bg:'#0ea5e9', bb_r_tx:'#ffffff',
+        sms_bg: '#e0f2fe', sms_tx: '#0c4a6e' // 추가됨
+      },
+      { 
+        name: '라벤더', 
+        bg1:'#f3e8ff', bg2:'#e0e7ff', text:'#4c1d95', hr:'#d8b4fe', 
+        hlbg:'#ede9fe', hltx:'#5b21b6', th:'#7c3aed', it:'#6d28d9', bd:'#4c1d95', qt:'#a78bfa', 
+        bb_l_bg:'#f5f3ff', bb_l_tx:'#4c1d95', bb_r_bg:'#8b5cf6', bb_r_tx:'#ffffff',
+        sms_bg: '#f5f3ff', sms_tx: '#5b21b6' // 추가됨
+      },
+      { 
+        name: '코지 블라썸', 
+        bg1:'#fff0f5', bg2:'#ffe4e9', text:'#5e2c38', hr:'#fbcfe8', 
+        hlbg:'#ffe4e6', hltx:'#881337', th:'#be123c', it:'#9f1239', bd:'#881337', qt:'#fb7185', 
+        bb_l_bg:'#fff1f2', bb_l_tx:'#881337', bb_r_bg:'#f43f5e', bb_r_tx:'#ffffff',
+        sms_bg: '#ffe4e6', sms_tx: '#881337' // 추가됨
+      }
     ];
 
+
+    
+      
+
+
+    
     // Runtime State
     let bgState = { mode:'gradient', imgData:null, sizeMode:'contain', overlayColor:'#000000', scale:100, posX:50, posY:50 };
     let insertTargetIndex = -1;
     let currentZoom = 'auto'; 
     let debounceTimer = null;
 
-    // Default Block Content (v1.3.5)
+    // Default Block Content (v1.4.1)
     let blocks = [{type:'text', content:`
-# 로그 카드 생성기 v1.3.5
+# 로그 카드 생성기 v1.4.1
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -776,6 +921,7 @@
 "큰따옴표는 대사로 처리되고요,"
 “스마트 따옴표도 자동으로 인식합니다.”
 '작은따옴표는 속마음으로 처리됩니다.'
+\`백틱 하나는 문자메시지로 처리됩니다.\`
 *별표 하나는 이탤릭 효과,*
 **별표 두 개는 굵게 강조해요.**
 일반 텍스트는 나레이션으로 들어갑니다.
@@ -923,7 +1069,7 @@ __ __: 글자 1단계 작게
                 document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
                 document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
                 
-                // Set default word-break to 'break-all' if undefined (Req: v1.3.5)
+                // Set default word-break to 'break-all' if undefined (Req: v1.4.1)
                 setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                 const savedAlign = data.settings.textAlign || 'justify';
@@ -1032,6 +1178,7 @@ __ __: 글자 1단계 작게
         if (type==='hr') { html += `<hr class="parsed-hr">`; return; }
 
         // 5. Inline Styling Parsing
+        s = s.replace(/`([^`]+)`/g, '__SMS_S__$1__SMS_E__'); // sms-box
         s = s.replace(/\*\*(.*?)\*\*/g, '__BD_S__$1__BD_E__'); // Bold
         s = s.replace(/\*(.*?)\*/g, '__IT_S__$1__IT_E__');     // Italic
         s = s.replace(/“(.*?)”/g, '__HL_S__$1__HL_E__');       // Smart Quote
@@ -1041,7 +1188,9 @@ __ __: 글자 1단계 작게
         s = s.replace(/__BD_S__/g, '<span class="parsed-bold">').replace(/__BD_E__/g, '</span>')
              .replace(/__IT_S__/g, '<span class="parsed-italic">').replace(/__IT_E__/g, '</span>')
              .replace(/__HL_S__/g, '<span class="highlight-text">“').replace(/__HL_E__/g, '”</span>')
-             .replace(/__TH_S__/g, '<span class="parsed-thought">\'').replace(/__TH_E__/g, '\'</span>');
+             .replace(/__TH_S__/g, '<span class="parsed-thought">\'').replace(/__TH_E__/g, '\'</span>')
+             .replace(/__SMS_S__/g, '<span class="sms-box">').replace(/__SMS_E__/g, '</span>');
+    
              
         // Restore HTML Tags
         s = s.replace(/__TAG_(\d+)__/g, (_, id) => tags[id]);
@@ -1268,10 +1417,18 @@ __ __: 글자 1단계 작게
 
         // 6. Construct CSS Variables
         // Note: --word-break defaults to 'break-all' based on HTML input value
-        const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px;`;
+        const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --sms-bg:${colors.sms_bg}; --sms-tx:${colors.sms_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px;`;
+
+      // 눈금 HTML 생성
+        const rulers = `
+            <div class="ruler-guide guide-left" style="top:50%" data-label="1/2"></div>
+            <div class="ruler-guide guide-right" style="top:33.33%" data-label="1/3"></div>
+            <div class="ruler-guide guide-right" style="top:66.66%" data-label="2/3"></div>
+        `;
+      
         
-        // 7. Render Final HTML
-        area.innerHTML = `<div class="card-frame" style="width:${width}px; padding:${pad}px; ${bgStyle} color:${colors.text}; font-family:${font}; font-weight:var(--base-weight, 400); ${cssVars}">` +
+      // 7. Render Final HTML (rulers + card)
+        area.innerHTML = rulers + `<div class="card-frame" style="width:${width}px; padding:${pad}px; ${bgStyle} color:${colors.text}; font-family:${font}; font-weight:var(--base-weight, 400); ${cssVars}">` +
         blocks.map(b => {
                 if (b.visible === false) return ''; 
                 return b.type === 'text' 
@@ -1436,7 +1593,7 @@ __ __: 글자 1단계 작게
         
     function exportPresets() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-        const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_3_5.json");
+        const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_4_1.json");
         document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
     }
     
@@ -1557,7 +1714,7 @@ __ __: 글자 1단계 작게
         const d = new Date();
         const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
         // Version Updated in Filename
-        return `Log_Card_v1_3_5_${y}${m}${day}_${h}${min}${s}.${ext}`;
+        return `Log_Card_v1_4_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
     }
 
     /* =========================================
@@ -1622,7 +1779,7 @@ __ __: 글자 1단계 작게
     }
 
 
-    // HTML Save: Generates standalone HTML with v1.3.5 headers
+    // HTML Save: Generates standalone HTML with v1.4.1 headers
     function saveHtml() {
         const content = document.getElementById('capture-area').innerHTML;
         const widthVal = document.getElementById('cardWidthInput').value; 
@@ -1637,6 +1794,7 @@ __ __: 글자 1단계 작게
             --hr-col: ${colors.hr};
             --bb-l-bg: ${colors.bb_l_bg}; --bb-l-tx: ${colors.bb_l_tx};
             --bb-r-bg: ${colors.bb_r_bg}; --bb-r-tx: ${colors.bb_r_tx};
+            --sms-bg: ${colors.sms_bg}; --sms-tx: ${colors.sms_tx};
             --base-sz: ${document.getElementById('fontSize').value}px;
             --base-lh: ${document.getElementById('lineHeight').value};
             --para-sp: ${document.getElementById('paraSpacing').value}px;
@@ -1663,7 +1821,7 @@ __ __: 글자 1단계 작게
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.3.5)</title>
+<title>Log Card Export (v1.4.1)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
