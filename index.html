@@ -2077,23 +2077,58 @@ __ __: 글자 1단계 작게
         // =========================================
         // 2. Initialization & Global Events
         // =========================================
+        
+
         window.onload = function () {
-            loadData();
-            initPresets();
-            renderBlocks();
-            updateUI();
-            updatePreview();
-            setBgSize(bgState.sizeMode, false);
+    loadData();
+    initPresets();
+    renderBlocks();
+    updateUI();
+    setBgSize(bgState.sizeMode, false);
+    setupPreviewClick();
 
-            setupPreviewClick();
+    // =========================================
+    // [수정됨] 초기 줌 배율 설정 로직
+    // PC: 100%, 모바일: 가로 폭 맞춤(Width-Fit)
+    // =========================================
+    const isPC = window.matchMedia("(min-width: 1024px)").matches;
+    
+    if (isPC) {
+        // PC는 100% 고정
+        currentZoom = 100;
+    } else {
+        // 모바일은 화면 가로 너비에 카드를 꽉 차게 맞춤
+        const cardWidth = parseInt(document.getElementById('cardWidthInput').value) || 1080;
+        // preview-container의 좌우 패딩(20px+20px=40px)을 고려하여 계산
+        const availableWidth = window.innerWidth - 40; 
+        
+        // 배율 계산 (화면너비 / 카드너비)
+        let calcZoom = (availableWidth / cardWidth) * 100;
+        
+        // 너무 작아지거나 커지는 것 방지 (최소 10%, 최대 100%)
+        calcZoom = Math.max(10, Math.min(calcZoom, 100));
+        
+        currentZoom = Math.floor(calcZoom);
+    }
 
-            window.addEventListener('resize', updatePreview);
+    // 슬라이더 UI와 라벨 업데이트
+    const zoomRange = document.getElementById('zoomRange');
+    const zoomLabel = document.getElementById('zoomLabel');
+    if (zoomRange) zoomRange.value = currentZoom;
+    if (zoomLabel) zoomLabel.innerText = currentZoom + '%';
 
-            // Editor panel initial state
-            document.getElementById('editorArea').classList.add('collapsed');
-            const isPC = window.matchMedia("(min-width: 1024px)").matches;
-            document.getElementById('foldIcon').innerText = isPC ? '▲' : '▲';
-        };
+    // 최종 적용
+    updatePreview(); 
+    // =========================================
+
+
+    window.addEventListener('resize', updatePreview);
+
+    // Editor panel initial state
+    document.getElementById('editorArea').classList.add('collapsed');
+    // const isPC check duplicated merely for icon logic inside original code
+    document.getElementById('foldIcon').innerText = isPC ? '▲' : '▲';
+};
 
         window.addEventListener('beforeunload', (event) => { event.preventDefault(); event.returnValue = ''; });
 
