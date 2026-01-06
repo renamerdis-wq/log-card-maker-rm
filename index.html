@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.6.1</title>
+    <title>로그 카드 생성기 v1.7.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1333,6 +1333,85 @@
             border-color: #94a3b8;
         }
 
+        /* =========================================
+           Bookmarklet Modal Styles
+           ========================================= */
+        #bookmarkletModal {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+            width: 380px;
+            padding: 24px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .bookmarklet-pill {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            cursor: grab;
+            /* 드래그 가능한 느낌 */
+            border: 2px dashed #93c5fd;
+            transition: transform 0.2s;
+        }
+
+        .bookmarklet-pill:hover {
+            transform: scale(1.05);
+            background: #2563eb;
+        }
+
+        .bookmarklet-desc {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        /* 체크박스 아이템 스타일 */
+        .check-box-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .check-box-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .check-box-item input[type="checkbox"] {
+            accent-color: #8b5cf6;
+            width: 16px; 
+            height: 16px;
+        }
+
+
         /* 슬라이더 색상 강제 통일 */
         input[type="range"] {
             accent-color: #3b82f6;
@@ -1367,16 +1446,30 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.6.1</div>
+            <div class="editor-title">로그 카드 생성기 v1.7.1</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
-                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;" onclick="exportProject()" title="프로젝트 저장 (JSON)">📤 내보내기</button>
-                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;" onclick="document.getElementById('projectFileInput').click()" title="프로젝트 불러오기 (JSON)">📥 불러오기</button>
+                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
+                    onclick="exportProject()" title="프로젝트 저장 (JSON)">📤 내보내기</button>
+                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
+                    onclick="document.getElementById('projectFileInput').click()" title="프로젝트 불러오기 (JSON)">📥
+                    불러오기</button>
 
-                <input type="file" id="projectFileInput" accept=".json" onchange="loadProject(this)" style="display: none;">
-                
+                <input type="file" id="projectFileInput" accept=".json" onchange="loadProject(this)"
+                    style="display: none;">
+
+                <button class="btn-reset"
+                    style="background:#f1f5f9; color:#334155; border-color:#cbd5e1; font-weight:bold;"
+                    onclick="document.getElementById('autoLogInput').click()"
+                    title="txt 파일을 선택하면 원하는 필터를 적용해 불러옵니다.">📄 TXT 가져오기</button>
+
+                <input type="file" id="autoLogInput" accept=".txt" onchange="openTxtImportModal(this)"
+                    style="display: none;">
+
                 <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;"
-                    onclick="openRegexModal(-1)" title="정규식">®️</button>
+                    onclick="openRegexModal(-1)" title="정규식">®️ 정규식</button>
+                <button class="btn-reset" style="background:#fffbeb; color:#b45309; border-color:#fcd34d;"
+                    onclick="openBookmarkletModal()" title="케이브덕 저장 북마크릿 만들기">🔖 북마크릿 생성</button>
                 <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;"
                     onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
                 <button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca;"
@@ -1832,7 +1925,7 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.6.1
+                © RenaMerdis v1.7.1
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
@@ -1896,11 +1989,66 @@
         </div>
     </div>
 
+    <div id="txtImportModal" style="display:none; flex-direction:column; gap:15px; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:3000; width:400px; padding:24px; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+    
+    <div style="font-size:18px; font-weight:800; color:#1e293b; border-bottom:1px solid #f1f5f9; padding-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+        <span>📄 텍스트 가져오기 옵션</span>
+        <button onclick="closeTxtImportModal()" style="border:none; background:none; font-size:16px; cursor:pointer; color:#64748b;">✕</button>
+    </div>
+
+    <div style="font-size:13px; color:#64748b;">
+        원하는 항목을 선택하세요.<br>
+        <span style="font-size:11px; color:#94a3b8;">(체크를 모두 해제하면 원본 그대로 가져옵니다)</span>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <label class="check-box-item"><input type="checkbox" id="chk-lightboard" checked> 🤖 라이트보드 제거</label>
+        <label class="check-box-item"><input type="checkbox" id="chk-wncs" checked> ⚙️ WNCS 태그 제거</label>
+        <label class="check-box-item"><input type="checkbox" id="chk-nai" checked> 🖼️ NAI 태그 제거</label>
+        <label class="check-box-item"><input type="checkbox" id="chk-response" checked> 📝 '# 응답' 제거</label>
+        <label class="check-box-item"><input type="checkbox" id="chk-saysnothing" checked> 🙊 *says nothing* 제거</label>
+        <label class="check-box-item"><input type="checkbox" id="chk-annotation" checked> ✏️ 주석 제거</label>
+        <label class="check-box-item"><input type="checkbox" id="chk-details" checked> 📂 Details 태그 제거</label>
+        <label class="check-box-item"><input type="checkbox" id="chk-empty" checked> 🧹 공백 줄 제거</label>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="btn-save" style="flex:1; background:#64748b;" onclick="closeTxtImportModal()">취소</button>
+        <button class="btn-save" style="flex:2; background:#8b5cf6;" onclick="executeTxtImport()">📥 불러오기</button>
+    </div>
+</div>
+    
+
+    <div id="bookmarkletModal">
+        <div style="font-size:18px; font-weight:800; color:#1e293b; margin-bottom:5px;">
+            🔖 북마크릿 가져가기
+        </div>
+
+        <div class="bookmarklet-desc">
+            보안상 버튼 클릭만으로는 추가할 수 없습니다.<br>
+            아래 <b>파란 버튼</b>을 마우스로 잡고<br>
+            브라우저 상단 <b>[즐겨찾기 바]</b>로<br>
+            <b>드래그 & 드롭</b> 해주세요!
+        </div>
+
+        <div style="padding:10px;">
+            <a class="bookmarklet-pill"
+                href='javascript:(async function(){let box=document.createElement("div");box.style.cssText="position:fixed;top:10px;left:10px;z-index:99999;background:rgba(0,0,0,0.8);color:white;padding:10px 15px;border-radius:20px;font-size:14px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.3);";box.innerText="🚀 시작하는 중...";document.body.appendChild(box);let count=0;while(true){let btn=Array.from(document.querySelectorAll("button")).find(b=>b.innerText.replace(/\s/g,"").includes("더보기"));if(btn){count++;box.innerText="👆 더보기 누르는 중... ("+count+"회)";btn.click();await new Promise(r=>setTimeout(r,1500));window.scrollTo(0,0);}else{break;}}box.innerText="📝 텍스트 정리 중...";await new Promise(r=>setTimeout(r,500));let msgs=document.querySelectorAll("p.text-caveduck-shadow");let res=[];let lastP=null;msgs.forEach(m=>{let txt=m.innerText.trim();if(!txt)return;let curP=m.parentElement;if(lastP&&curP!==lastP)res.push("\n---\n");lastP=curP;let st=m.getAttribute("style")||"";if(st.includes("--color-user-message")||st.includes("--color-char-message"))res.push(`"${txt}"`);else res.push(txt)});let blob=new Blob([res.join("\n")],{type:"text/plain"});let link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=`케이브덕_${new Date().toISOString().slice(0,10)}.txt`;document.body.appendChild(link);link.click();document.body.removeChild(link);box.innerText="✅ 저장 완료! (파일 확인)";setTimeout(()=>box.remove(),5000);})();'
+                onclick="alert(&quot;클릭하는 게 아닙니다!\n버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 '드래그' 하세요.\n케덕 대화방에 들어가서 추가한 북마크를 누르고 기다려주세요. TXT 파일이 저장됩니다.(맞춤채팅방 설정에서 색상테마 다크, 폰트색상 기본값으로 설정해야합니다.)&quot;); return false;">
+                📥 케이브덕 저장기 (상태표시)
+            </a>
+        </div>
+
+        <button class="btn-save" style="background:#64748b; margin-top:10px;"
+            onclick="closeBookmarkletModal()">닫기</button>
+    </div>
+
+
     <script>
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_6_1_data'; // Updated for v1.6.1 compatibility
+        const STORAGE_KEY = 'LogCardv1_7_1_data'; // Updated for v1.7.1 compatibility
 
         // Default Color Palette
         let colors = {
@@ -2022,10 +2170,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.6.1)
+        // Default Block Content (v1.7.1)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.6.1
+# 로그 카드 생성기 v1.7.1
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2077,58 +2225,58 @@ __ __: 글자 1단계 작게
         // =========================================
         // 2. Initialization & Global Events
         // =========================================
-        
+
 
         window.onload = function () {
-    loadData();
-    initPresets();
-    renderBlocks();
-    updateUI();
-    setBgSize(bgState.sizeMode, false);
-    setupPreviewClick();
+            loadData();
+            initPresets();
+            renderBlocks();
+            updateUI();
+            setBgSize(bgState.sizeMode, false);
+            setupPreviewClick();
 
-    // =========================================
-    // [수정됨] 초기 줌 배율 설정 로직
-    // PC: 100%, 모바일: 가로 폭 맞춤(Width-Fit)
-    // =========================================
-    const isPC = window.matchMedia("(min-width: 1024px)").matches;
-    
-    if (isPC) {
-        // PC는 100% 고정
-        currentZoom = 100;
-    } else {
-        // 모바일은 화면 가로 너비에 카드를 꽉 차게 맞춤
-        const cardWidth = parseInt(document.getElementById('cardWidthInput').value) || 1080;
-        // preview-container의 좌우 패딩(20px+20px=40px)을 고려하여 계산
-        const availableWidth = window.innerWidth - 40; 
-        
-        // 배율 계산 (화면너비 / 카드너비)
-        let calcZoom = (availableWidth / cardWidth) * 100;
-        
-        // 너무 작아지거나 커지는 것 방지 (최소 10%, 최대 100%)
-        calcZoom = Math.max(10, Math.min(calcZoom, 100));
-        
-        currentZoom = Math.floor(calcZoom);
-    }
+            // =========================================
+            // [수정됨] 초기 줌 배율 설정 로직
+            // PC: 100%, 모바일: 가로 폭 맞춤(Width-Fit)
+            // =========================================
+            const isPC = window.matchMedia("(min-width: 1024px)").matches;
 
-    // 슬라이더 UI와 라벨 업데이트
-    const zoomRange = document.getElementById('zoomRange');
-    const zoomLabel = document.getElementById('zoomLabel');
-    if (zoomRange) zoomRange.value = currentZoom;
-    if (zoomLabel) zoomLabel.innerText = currentZoom + '%';
+            if (isPC) {
+                // PC는 100% 고정
+                currentZoom = 100;
+            } else {
+                // 모바일은 화면 가로 너비에 카드를 꽉 차게 맞춤
+                const cardWidth = parseInt(document.getElementById('cardWidthInput').value) || 1080;
+                // preview-container의 좌우 패딩(20px+20px=40px)을 고려하여 계산
+                const availableWidth = window.innerWidth - 40;
 
-    // 최종 적용
-    updatePreview(); 
-    // =========================================
+                // 배율 계산 (화면너비 / 카드너비)
+                let calcZoom = (availableWidth / cardWidth) * 100;
+
+                // 너무 작아지거나 커지는 것 방지 (최소 10%, 최대 100%)
+                calcZoom = Math.max(10, Math.min(calcZoom, 100));
+
+                currentZoom = Math.floor(calcZoom);
+            }
+
+            // 슬라이더 UI와 라벨 업데이트
+            const zoomRange = document.getElementById('zoomRange');
+            const zoomLabel = document.getElementById('zoomLabel');
+            if (zoomRange) zoomRange.value = currentZoom;
+            if (zoomLabel) zoomLabel.innerText = currentZoom + '%';
+
+            // 최종 적용
+            updatePreview();
+            // =========================================
 
 
-    window.addEventListener('resize', updatePreview);
+            window.addEventListener('resize', updatePreview);
 
-    // Editor panel initial state
-    document.getElementById('editorArea').classList.add('collapsed');
-    // const isPC check duplicated merely for icon logic inside original code
-    document.getElementById('foldIcon').innerText = isPC ? '▲' : '▲';
-};
+            // Editor panel initial state
+            document.getElementById('editorArea').classList.add('collapsed');
+            // const isPC check duplicated merely for icon logic inside original code
+            document.getElementById('foldIcon').innerText = isPC ? '▲' : '▲';
+        };
 
         window.addEventListener('beforeunload', (event) => { event.preventDefault(); event.returnValue = ''; });
 
@@ -2222,7 +2370,7 @@ __ __: 글자 1단계 작게
                     document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
                     document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.6.1)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.7.1)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -2447,7 +2595,7 @@ __ __: 글자 1단계 작게
             ${b.type === 'text' ? `<button class="btn-sm" style="background:#f3e8ff; color:#6b21a8;" onclick="wrapHtmlTags(${i})" title="HTML 보호 태그 씌우기">🛡️</button>` : ''}
             ${b.type === 'text' ? `<button class="btn-sm" style="background:#fff7ed; color:#c2410c;" onclick="removeStars(${i})" title="별표(*) 지우기 (강조 제외)">🌠</button>` : ''}
             ${b.type === 'text' ? `<button class="btn-sm" style="background:#f1f5f9; color:#475569;" onclick="removeEmptyLines(${i})" title="빈 줄 지우기">🧹</button>` : ''}
-${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f46e5;" onclick="openRegexModal(${i})" title="정규식 치환">®️</button>` : ''}
+            ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f46e5;" onclick="openRegexModal(${i})" title="정규식 치환">®️</button>` : ''}
             ${b.type === 'text' ? `<button class="btn-sm" style="background:#e0f2fe; color:#0369a1;" onclick="smartExtract(event, ${i})" title="배경색 추출">🧙‍♂️</button>` : ''}
             ${b.type === 'text' ? `<button class="btn-sm" style="background:#f0fdf4; color:#15803d;" onclick="toggleConvMode(${i})" title="말풍선/따옴표 변환">💬</button>` : ''}
             ${b.type === 'text' ? `<button class="btn-sm" onclick="splitBlock(event, ${i})" title="나누기">✂️</button>` : ''}
@@ -2582,19 +2730,19 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
 
 
             // [수정된 부분] updatePreview 함수 내부의 렌더링 로직
-        // 7. Render Final HTML (rulers + card)
-        // 변경점: 각 블록을 감싸는 div에 'preview-block-item' 클래스와 'data-index' 속성 추가
-        area.innerHTML = rulers + `<div class="card-frame" style="width:${width}px; padding:${pad}px; ${bgStyle} color:${colors.text}; font-family:${font}; font-weight:var(--base-weight, 400); ${cssVars}">` +
-            blocks.map((b, i) => {
-                if (b.visible === false) return '';
-                
-                // 클릭 이벤트를 위해 감싸는 래퍼(Wrapper) 추가
-                return `<div class="preview-block-item" data-index="${i}" style="cursor: pointer;" title="클릭하여 수정하기">` + 
-                    (b.type === 'text'
-                    ? `<div style="display:contents;">${parseContent(b.content)}</div>`
-                    : `<div style="text-align:center; margin:var(--para-sp) 0;"><img src="${b.content}" style="width:${b.width || 100}%; border-radius:8px;"></div>`)
-                    + `</div>`;
-            }).join('') + `</div>`;
+            // 7. Render Final HTML (rulers + card)
+            // 변경점: 각 블록을 감싸는 div에 'preview-block-item' 클래스와 'data-index' 속성 추가
+            area.innerHTML = rulers + `<div class="card-frame" style="width:${width}px; padding:${pad}px; ${bgStyle} color:${colors.text}; font-family:${font}; font-weight:var(--base-weight, 400); ${cssVars}">` +
+                blocks.map((b, i) => {
+                    if (b.visible === false) return '';
+
+                    // 클릭 이벤트를 위해 감싸는 래퍼(Wrapper) 추가
+                    return `<div class="preview-block-item" data-index="${i}" style="cursor: pointer;" title="클릭하여 수정하기">` +
+                        (b.type === 'text'
+                            ? `<div style="display:contents;">${parseContent(b.content)}</div>`
+                            : `<div style="text-align:center; margin:var(--para-sp) 0;"><img src="${b.content}" style="width:${b.width || 100}%; border-radius:8px;"></div>`)
+                        + `</div>`;
+                }).join('') + `</div>`;
         }
 
         /* =========================================
@@ -2666,57 +2814,57 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
 
         /* --- Preset Handling --- */
         function applyPreset(p) {
-        colors = { ...colors, ...p }; 
-        
-        // [수정됨] 프리셋에 폰트가 지정되어 있을 때만 변경 (없으면 현재 폰트 유지)
-        if (p.font) {
-            const targetFont = p.font;
-            document.getElementById('fontSelect').value = targetFont;
-            const btns = document.querySelectorAll('.font-btn');
-            btns.forEach(b => b.classList.remove('active'));
-            let targetBtn = Array.from(btns).find(b => {
-                const clickAttr = b.getAttribute('onclick');
-                return clickAttr && clickAttr.includes(targetFont.replace(/'/g, "\\'"));
-            });
-            if(!targetBtn && btns.length > 0) targetBtn = btns[0];
-            if(targetBtn) targetBtn.classList.add('active');
-        }
+            colors = { ...colors, ...p };
 
-        if(p.textAlign) { setAlign(p.textAlign, false); }
+            // [수정됨] 프리셋에 폰트가 지정되어 있을 때만 변경 (없으면 현재 폰트 유지)
+            if (p.font) {
+                const targetFont = p.font;
+                document.getElementById('fontSelect').value = targetFont;
+                const btns = document.querySelectorAll('.font-btn');
+                btns.forEach(b => b.classList.remove('active'));
+                let targetBtn = Array.from(btns).find(b => {
+                    const clickAttr = b.getAttribute('onclick');
+                    return clickAttr && clickAttr.includes(targetFont.replace(/'/g, "\\'"));
+                });
+                if (!targetBtn && btns.length > 0) targetBtn = btns[0];
+                if (targetBtn) targetBtn.classList.add('active');
+            }
 
-        if(p.padding !== undefined) { document.getElementById('paddingRange').value = p.padding; updateVal('paddingRange', p.padding); }
-        if(p.gradAngle !== undefined) { 
-            document.getElementById('gradAngle').value = p.gradAngle; updateVal('gradAngle', p.gradAngle); 
-            const angleInput = document.getElementById('input-gradAngle'); if(angleInput) angleInput.value = p.gradAngle;
-        }
-        if(p.paraSpacing !== undefined) { document.getElementById('paraSpacing').value = p.paraSpacing; updateVal('paraSpacing', p.paraSpacing); }
-        if(p.width !== undefined) { document.getElementById('cardWidthInput').value = p.width; }
-        if(p.noItalic !== undefined) { document.getElementById('noItalic').checked = p.noItalic; }
+            if (p.textAlign) { setAlign(p.textAlign, false); }
 
-        // [새로 추가됨] 글자 크기, 굵기, 줄간격 적용 로직
-        if(p.fontSize !== undefined) { 
-            document.getElementById('fontSize').value = p.fontSize; 
-            updateVal('fontSize', p.fontSize); 
-        }
-        if(p.fontWeight !== undefined) { 
-            document.getElementById('fontWeight').value = p.fontWeight; 
-            updateVal('fontWeight', p.fontWeight); 
-        }
-        if(p.lineHeight !== undefined) { 
-            document.getElementById('lineHeight').value = p.lineHeight; 
-            updateVal('lineHeight', p.lineHeight); 
-        }
+            if (p.padding !== undefined) { document.getElementById('paddingRange').value = p.padding; updateVal('paddingRange', p.padding); }
+            if (p.gradAngle !== undefined) {
+                document.getElementById('gradAngle').value = p.gradAngle; updateVal('gradAngle', p.gradAngle);
+                const angleInput = document.getElementById('input-gradAngle'); if (angleInput) angleInput.value = p.gradAngle;
+            }
+            if (p.paraSpacing !== undefined) { document.getElementById('paraSpacing').value = p.paraSpacing; updateVal('paraSpacing', p.paraSpacing); }
+            if (p.width !== undefined) { document.getElementById('cardWidthInput').value = p.width; }
+            if (p.noItalic !== undefined) { document.getElementById('noItalic').checked = p.noItalic; }
 
-        if(p.bgState) {
-            bgState = { ...bgState, ...p.bgState };
-            updateVal('bgScale', bgState.scale); updateVal('bgPosX', bgState.posX); updateVal('bgPosY', bgState.posY);
-            document.getElementById('bgScale').value = bgState.scale; document.getElementById('bgPosX').value = bgState.posX; document.getElementById('bgPosY').value = bgState.posY;
-            if(bgState.mode === 'image') { document.getElementById('showImgOption').checked = true; toggleImgPanel(true, false); } 
-            else { document.getElementById('showImgOption').checked = false; toggleImgPanel(false, false); }
-            setBgSize(bgState.sizeMode, false);
+            // [새로 추가됨] 글자 크기, 굵기, 줄간격 적용 로직
+            if (p.fontSize !== undefined) {
+                document.getElementById('fontSize').value = p.fontSize;
+                updateVal('fontSize', p.fontSize);
+            }
+            if (p.fontWeight !== undefined) {
+                document.getElementById('fontWeight').value = p.fontWeight;
+                updateVal('fontWeight', p.fontWeight);
+            }
+            if (p.lineHeight !== undefined) {
+                document.getElementById('lineHeight').value = p.lineHeight;
+                updateVal('lineHeight', p.lineHeight);
+            }
+
+            if (p.bgState) {
+                bgState = { ...bgState, ...p.bgState };
+                updateVal('bgScale', bgState.scale); updateVal('bgPosX', bgState.posX); updateVal('bgPosY', bgState.posY);
+                document.getElementById('bgScale').value = bgState.scale; document.getElementById('bgPosX').value = bgState.posX; document.getElementById('bgPosY').value = bgState.posY;
+                if (bgState.mode === 'image') { document.getElementById('showImgOption').checked = true; toggleImgPanel(true, false); }
+                else { document.getElementById('showImgOption').checked = false; toggleImgPanel(false, false); }
+                setBgSize(bgState.sizeMode, false);
+            }
+            updateUI(); updatePreview(); saveData();
         }
-        updateUI(); updatePreview(); saveData();
-    }
 
         function initPresets() {
             const c = document.getElementById('presetList'); c.innerHTML = '';
@@ -2735,42 +2883,42 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
         }
 
         function saveCurrentToPreset() {
-        const name = prompt("현재 설정을 저장합니다. 이름을 입력하세요:", "나만의 프리셋");
-        if(name) {
-            // 기존에 없던 항목들(fontSize, fontWeight, lineHeight) 추가
-            const currentPadding = document.getElementById('paddingRange').value; 
-            const currentFont = document.getElementById('fontSelect').value; 
-            const currentAngle = document.getElementById('gradAngle').value;
-            const currentWidth = document.getElementById('cardWidthInput').value;
-            const currentNoItalic = document.getElementById('noItalic').checked;
-            const currentParaSpacing = document.getElementById('paraSpacing').value;
-            const currentAlign = document.getElementById('textAlignInput').value; 
-            
-            // 추가된 항목들
-            const currentFontSize = document.getElementById('fontSize').value;
-            const currentFontWeight = document.getElementById('fontWeight').value;
-            const currentLineHeight = document.getElementById('lineHeight').value;
+            const name = prompt("현재 설정을 저장합니다. 이름을 입력하세요:", "나만의 프리셋");
+            if (name) {
+                // 기존에 없던 항목들(fontSize, fontWeight, lineHeight) 추가
+                const currentPadding = document.getElementById('paddingRange').value;
+                const currentFont = document.getElementById('fontSelect').value;
+                const currentAngle = document.getElementById('gradAngle').value;
+                const currentWidth = document.getElementById('cardWidthInput').value;
+                const currentNoItalic = document.getElementById('noItalic').checked;
+                const currentParaSpacing = document.getElementById('paraSpacing').value;
+                const currentAlign = document.getElementById('textAlignInput').value;
 
-            const newPreset = { 
-                name: name, 
-                ...colors, 
-                padding: currentPadding, 
-                textAlign: currentAlign, 
-                font: currentFont, 
-                gradAngle: currentAngle, 
-                width: currentWidth,
-                noItalic: currentNoItalic, 
-                paraSpacing: currentParaSpacing,
-                // 여기에 새로 추가
-                fontSize: currentFontSize,
-                fontWeight: currentFontWeight,
-                lineHeight: currentLineHeight,
-                
-                bgState: { ...bgState } 
-            };
-            presets.push(newPreset); initPresets(); saveData();
+                // 추가된 항목들
+                const currentFontSize = document.getElementById('fontSize').value;
+                const currentFontWeight = document.getElementById('fontWeight').value;
+                const currentLineHeight = document.getElementById('lineHeight').value;
+
+                const newPreset = {
+                    name: name,
+                    ...colors,
+                    padding: currentPadding,
+                    textAlign: currentAlign,
+                    font: currentFont,
+                    gradAngle: currentAngle,
+                    width: currentWidth,
+                    noItalic: currentNoItalic,
+                    paraSpacing: currentParaSpacing,
+                    // 여기에 새로 추가
+                    fontSize: currentFontSize,
+                    fontWeight: currentFontWeight,
+                    lineHeight: currentLineHeight,
+
+                    bgState: { ...bgState }
+                };
+                presets.push(newPreset); initPresets(); saveData();
+            }
         }
-    }
 
         function setAlign(align, save = true) {
             document.getElementById('textAlignInput').value = align;
@@ -2788,7 +2936,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_6_1.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_7_1.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -2909,7 +3057,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_6_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_7_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -2976,134 +3124,134 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
         /* =========================================
        Project Save / Load (JSON)
        ========================================= */
-    
-    // 전체 프로젝트 내보내기 (텍스트, 이미지, 설정 등 모두 포함)
-    function exportProject() {
-        const data = {
-            version: "1.5.1",
-            date: new Date().toISOString(),
-            colors, 
-            bgState, 
-            blocks, 
-            presets,
-            settings: {
-                width: document.getElementById('cardWidthInput').value,
-                padding: document.getElementById('paddingRange').value,
-                fontSize: document.getElementById('fontSize').value,
-                fontWeight: document.getElementById('fontWeight').value,
-                lineHeight: document.getElementById('lineHeight').value,
-                font: document.getElementById('fontSelect').value,
-                angle: document.getElementById('gradAngle').value,
-                overlayAlpha: document.getElementById('overlayAlpha').value,
-                paraSpacing: document.getElementById('paraSpacing').value,
-                textAlign: document.getElementById('textAlignInput').value,
-                wordBreak: document.getElementById('wordBreakInput').value,
-                noItalic: document.getElementById('noItalic').checked
-            }
-        };
 
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-        const dlNode = document.createElement('a');
-        dlNode.setAttribute("href", dataStr);
-        // 파일명에 _Project를 붙여서 구분
-        dlNode.setAttribute("download", getFileName('json').replace('.json', '_Project.json'));
-        document.body.appendChild(dlNode);
-        dlNode.click();
-        dlNode.remove();
-    }
-
-    // 프로젝트 파일 불러오기
-    function loadProject(input) {
-        const file = input.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                
-                if(confirm("현재 작업 내용을 덮어쓰고 프로젝트를 불러오시겠습니까?")) {
-                    // 데이터 복구
-                    if (data.colors) colors = data.colors;
-                    if (data.bgState) bgState = data.bgState;
-                    if (data.blocks) blocks = data.blocks;
-                    if (data.presets) presets = data.presets; // 저장된 프리셋 목록도 복구
-
-                    if (data.settings) {
-                        document.getElementById('cardWidthInput').value = data.settings.width || 1080;
-                        document.getElementById('paddingRange').value = data.settings.padding || 90;
-                        document.getElementById('fontSize').value = data.settings.fontSize || 45;
-                        document.getElementById('fontWeight').value = data.settings.fontWeight || 400;
-                        document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
-                        document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
-                        
-                        setWordBreak(data.settings.wordBreak || 'break-all', false);
-                        setAlign(data.settings.textAlign || 'justify', false);
-                        
-                        // 폰트 버튼 상태 동기화
-                        const savedFont = data.settings.font || "Pretendard, sans-serif";
-                        const btns = document.querySelectorAll('.font-btn');
-                        btns.forEach(btn => btn.classList.remove('active'));
-                        let targetBtn = Array.from(btns).find(b => b.getAttribute('onclick').includes(savedFont.replace(/'/g, "\\'")));
-                        if (!targetBtn) targetBtn = btns[0];
-                        if (targetBtn) targetBtn.classList.add('active');
-
-                        document.getElementById('gradAngle').value = data.settings.angle || 235;
-                        document.getElementById('input-gradAngle').value = data.settings.angle || 235;
-                        
-                        document.getElementById('overlayAlpha').value = data.settings.overlayAlpha || 0.5;
-                        document.getElementById('paraSpacing').value = data.settings.paraSpacing || 27;
-                        document.getElementById('noItalic').checked = data.settings.noItalic || false;
-                    }
-
-                    // UI 값 업데이트 (슬라이더 숫자 등)
-                    updateVal('fontSize', document.getElementById('fontSize').value);
-                    updateVal('fontWeight', document.getElementById('fontWeight').value);
-                    updateVal('lineHeight', document.getElementById('lineHeight').value);
-                    updateVal('gradAngle', document.getElementById('gradAngle').value);
-                    updateVal('overlayAlpha', document.getElementById('overlayAlpha').value);
-                    updateVal('paraSpacing', document.getElementById('paraSpacing').value);
-                    updateVal('paddingRange', document.getElementById('paddingRange').value);
-
-                    // 배경 모드 복구
-                    if (bgState.mode === 'image') {
-                        document.getElementById('showImgOption').checked = true;
-                        toggleImgPanel(true, false);
-                    } else {
-                        document.getElementById('showImgOption').checked = false;
-                        toggleImgPanel(false, false);
-                    }
-
-                    // 배경 이미지 설정 복구
-                    updateVal('bgScale', bgState.scale);
-                    updateVal('bgPosX', bgState.posX);
-                    updateVal('bgPosY', bgState.posY);
-                    document.getElementById('bgScale').value = bgState.scale;
-                    document.getElementById('bgPosX').value = bgState.posX;
-                    document.getElementById('bgPosY').value = bgState.posY;
-                    
-                    setBgSize(bgState.sizeMode, false); // Cover/Contain 상태 복구
-
-                    // 화면 갱신 및 자동 저장
-                    initPresets(); // 프리셋 목록 갱신
-                    updateUI();    // 색상 등 UI 갱신
-                    renderBlocks(); // 텍스트/이미지 블록 다시 그리기
-                    updatePreview(); // 미리보기 갱신
-                    saveData();    // 로컬 스토리지에 저장
-                    
-                    alert("성공적으로 프로젝트를 불러왔습니다!");
+        // 전체 프로젝트 내보내기 (텍스트, 이미지, 설정 등 모두 포함)
+        function exportProject() {
+            const data = {
+                version: "1.5.1",
+                date: new Date().toISOString(),
+                colors,
+                bgState,
+                blocks,
+                presets,
+                settings: {
+                    width: document.getElementById('cardWidthInput').value,
+                    padding: document.getElementById('paddingRange').value,
+                    fontSize: document.getElementById('fontSize').value,
+                    fontWeight: document.getElementById('fontWeight').value,
+                    lineHeight: document.getElementById('lineHeight').value,
+                    font: document.getElementById('fontSelect').value,
+                    angle: document.getElementById('gradAngle').value,
+                    overlayAlpha: document.getElementById('overlayAlpha').value,
+                    paraSpacing: document.getElementById('paraSpacing').value,
+                    textAlign: document.getElementById('textAlignInput').value,
+                    wordBreak: document.getElementById('wordBreakInput').value,
+                    noItalic: document.getElementById('noItalic').checked
                 }
-            } catch (err) {
-                alert("파일을 불러오는 중 오류가 발생했습니다. 올바른 JSON 파일인지 확인해주세요.");
-                console.error(err);
-            }
-        };
-        reader.readAsText(file);
-        input.value = ''; // 같은 파일 다시 로드 가능하게 초기화
-    }
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            const dlNode = document.createElement('a');
+            dlNode.setAttribute("href", dataStr);
+            // 파일명에 _Project를 붙여서 구분
+            dlNode.setAttribute("download", getFileName('json').replace('.json', '_Project.json'));
+            document.body.appendChild(dlNode);
+            dlNode.click();
+            dlNode.remove();
+        }
+
+        // 프로젝트 파일 불러오기
+        function loadProject(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    if (confirm("현재 작업 내용을 덮어쓰고 프로젝트를 불러오시겠습니까?")) {
+                        // 데이터 복구
+                        if (data.colors) colors = data.colors;
+                        if (data.bgState) bgState = data.bgState;
+                        if (data.blocks) blocks = data.blocks;
+                        if (data.presets) presets = data.presets; // 저장된 프리셋 목록도 복구
+
+                        if (data.settings) {
+                            document.getElementById('cardWidthInput').value = data.settings.width || 1080;
+                            document.getElementById('paddingRange').value = data.settings.padding || 90;
+                            document.getElementById('fontSize').value = data.settings.fontSize || 45;
+                            document.getElementById('fontWeight').value = data.settings.fontWeight || 400;
+                            document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
+                            document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
+
+                            setWordBreak(data.settings.wordBreak || 'break-all', false);
+                            setAlign(data.settings.textAlign || 'justify', false);
+
+                            // 폰트 버튼 상태 동기화
+                            const savedFont = data.settings.font || "Pretendard, sans-serif";
+                            const btns = document.querySelectorAll('.font-btn');
+                            btns.forEach(btn => btn.classList.remove('active'));
+                            let targetBtn = Array.from(btns).find(b => b.getAttribute('onclick').includes(savedFont.replace(/'/g, "\\'")));
+                            if (!targetBtn) targetBtn = btns[0];
+                            if (targetBtn) targetBtn.classList.add('active');
+
+                            document.getElementById('gradAngle').value = data.settings.angle || 235;
+                            document.getElementById('input-gradAngle').value = data.settings.angle || 235;
+
+                            document.getElementById('overlayAlpha').value = data.settings.overlayAlpha || 0.5;
+                            document.getElementById('paraSpacing').value = data.settings.paraSpacing || 27;
+                            document.getElementById('noItalic').checked = data.settings.noItalic || false;
+                        }
+
+                        // UI 값 업데이트 (슬라이더 숫자 등)
+                        updateVal('fontSize', document.getElementById('fontSize').value);
+                        updateVal('fontWeight', document.getElementById('fontWeight').value);
+                        updateVal('lineHeight', document.getElementById('lineHeight').value);
+                        updateVal('gradAngle', document.getElementById('gradAngle').value);
+                        updateVal('overlayAlpha', document.getElementById('overlayAlpha').value);
+                        updateVal('paraSpacing', document.getElementById('paraSpacing').value);
+                        updateVal('paddingRange', document.getElementById('paddingRange').value);
+
+                        // 배경 모드 복구
+                        if (bgState.mode === 'image') {
+                            document.getElementById('showImgOption').checked = true;
+                            toggleImgPanel(true, false);
+                        } else {
+                            document.getElementById('showImgOption').checked = false;
+                            toggleImgPanel(false, false);
+                        }
+
+                        // 배경 이미지 설정 복구
+                        updateVal('bgScale', bgState.scale);
+                        updateVal('bgPosX', bgState.posX);
+                        updateVal('bgPosY', bgState.posY);
+                        document.getElementById('bgScale').value = bgState.scale;
+                        document.getElementById('bgPosX').value = bgState.posX;
+                        document.getElementById('bgPosY').value = bgState.posY;
+
+                        setBgSize(bgState.sizeMode, false); // Cover/Contain 상태 복구
+
+                        // 화면 갱신 및 자동 저장
+                        initPresets(); // 프리셋 목록 갱신
+                        updateUI();    // 색상 등 UI 갱신
+                        renderBlocks(); // 텍스트/이미지 블록 다시 그리기
+                        updatePreview(); // 미리보기 갱신
+                        saveData();    // 로컬 스토리지에 저장
+
+                        alert("성공적으로 프로젝트를 불러왔습니다!");
+                    }
+                } catch (err) {
+                    alert("파일을 불러오는 중 오류가 발생했습니다. 올바른 JSON 파일인지 확인해주세요.");
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            input.value = ''; // 같은 파일 다시 로드 가능하게 초기화
+        }
 
 
-        // HTML Save: Generates standalone HTML with v1.6.1 headers
+        // HTML Save: Generates standalone HTML with v1.7.1 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
@@ -3145,7 +3293,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.6.1)</title>
+<title>Log Card Export (v1.7.1)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
@@ -3514,62 +3662,180 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
         /* =========================================
    [수정됨] Preview Click to Edit (따옴표 호환성 개선)
    ========================================= */
-function setupPreviewClick() {
-    const captureArea = document.getElementById('capture-area');
-    
-    captureArea.addEventListener('click', function(e) {
-        // 1. 클릭된 요소가 어느 블록에 속하는지 찾기
-        const wrapper = e.target.closest('.preview-block-item');
-        if (!wrapper) return; 
+        function setupPreviewClick() {
+            const captureArea = document.getElementById('capture-area');
 
-        const index = wrapper.getAttribute('data-index');
-        const textarea = document.getElementById(`editor-${index}`);
-        
-        if (textarea) {
-            // 2. 에디터 패널이 닫혀있다면 열기
-            const editorArea = document.getElementById('editorArea');
-            if (editorArea.classList.contains('collapsed')) {
-                toggleEditor();
-            }
+            captureArea.addEventListener('click', function (e) {
+                // 1. 클릭된 요소가 어느 블록에 속하는지 찾기
+                const wrapper = e.target.closest('.preview-block-item');
+                if (!wrapper) return;
 
-            // 3. 클릭한 텍스트 내용 가져오기
-            let clickedText = e.target.innerText.trim();
-            if (!clickedText) return;
+                const index = wrapper.getAttribute('data-index');
+                const textarea = document.getElementById(`editor-${index}`);
 
-            // 4. 에디터의 원본 텍스트(Raw Text)에서 위치 찾기
-            const rawContent = textarea.value;
-            
-            // [수정 포인트] 1차 시도: 있는 그대로 찾기
-            let pos = rawContent.indexOf(clickedText);
+                if (textarea) {
+                    // 2. 에디터 패널이 닫혀있다면 열기
+                    const editorArea = document.getElementById('editorArea');
+                    if (editorArea.classList.contains('collapsed')) {
+                        toggleEditor();
+                    }
 
-            // [수정 포인트] 2차 시도: 실패했다면 스마트 따옴표를 일반 따옴표로 변환해 찾기
-            if (pos === -1) {
-                // “, ” -> " 로 변경 / ‘, ’ -> ' 로 변경
-                const normalizedText = clickedText.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
-                pos = rawContent.indexOf(normalizedText);
-            }
+                    // 3. 클릭한 텍스트 내용 가져오기
+                    let clickedText = e.target.innerText.trim();
+                    if (!clickedText) return;
 
-            // [수정 포인트] 3차 시도: 그래도 실패했다면(스타일 태그 등으로 인해), 앞뒤 따옴표를 떼고 알맹이만 찾기
-            if (pos === -1) {
-                const strippedText = clickedText.replace(/^["“”'‘’]/, '').replace(/["“”'‘’]$/, '');
-                if (strippedText.length > 2) { // 너무 짧은 단어는 오작동 방지
-                    pos = rawContent.indexOf(strippedText);
+                    // 4. 에디터의 원본 텍스트(Raw Text)에서 위치 찾기
+                    const rawContent = textarea.value;
+
+                    // [수정 포인트] 1차 시도: 있는 그대로 찾기
+                    let pos = rawContent.indexOf(clickedText);
+
+                    // [수정 포인트] 2차 시도: 실패했다면 스마트 따옴표를 일반 따옴표로 변환해 찾기
+                    if (pos === -1) {
+                        // “, ” -> " 로 변경 / ‘, ’ -> ' 로 변경
+                        const normalizedText = clickedText.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+                        pos = rawContent.indexOf(normalizedText);
+                    }
+
+                    // [수정 포인트] 3차 시도: 그래도 실패했다면(스타일 태그 등으로 인해), 앞뒤 따옴표를 떼고 알맹이만 찾기
+                    if (pos === -1) {
+                        const strippedText = clickedText.replace(/^["“”'‘’]/, '').replace(/["“”'‘’]$/, '');
+                        if (strippedText.length > 2) { // 너무 짧은 단어는 오작동 방지
+                            pos = rawContent.indexOf(strippedText);
+                        }
+                    }
+
+                    // 5. 스크롤 이동 및 포커스
+                    textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    setTimeout(() => {
+                        textarea.focus();
+                        if (pos !== -1) {
+                            // 찾은 위치로 커서 이동 및 텍스트 선택
+                            textarea.setSelectionRange(pos, pos + clickedText.length);
+                        }
+                    }, 300);
                 }
-            }
-
-            // 5. 스크롤 이동 및 포커스
-            textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            setTimeout(() => {
-                textarea.focus();
-                if (pos !== -1) {
-                    // 찾은 위치로 커서 이동 및 텍스트 선택
-                    textarea.setSelectionRange(pos, pos + clickedText.length);
-                }
-            }, 300);
+            });
         }
-    });
-}
+
+
+
+
+        /* =========================================
+           [NEW] TXT Import Logic with Options
+           ========================================= */
+           
+        let pendingTxtFile = null; // 선택된 파일을 임시 저장할 변수
+        
+        // 1. 파일 선택 시 모달 열기
+        function openTxtImportModal(input) {
+            if (!input.files || !input.files[0]) return;
+            pendingTxtFile = input.files[0]; // 파일 저장
+            
+            // 모달 표시
+            document.getElementById('txtImportModal').style.display = 'flex';
+            document.getElementById('pickerOverlay').style.display = 'block';
+            
+            // input 초기화 (취소 후 다시 같은 파일 선택 가능하게)
+            input.value = '';
+        }
+        
+        // 2. 모달 닫기
+        function closeTxtImportModal() {
+            document.getElementById('txtImportModal').style.display = 'none';
+            document.getElementById('pickerOverlay').style.display = 'none';
+            pendingTxtFile = null; // 임시 파일 초기화
+        }
+        
+        // 3. 실행 (선택된 옵션에 따라 정규식 적용)
+        function executeTxtImport() {
+            if (!pendingTxtFile) {
+                alert("파일이 선택되지 않았습니다.");
+                closeTxtImportModal();
+                return;
+            }
+        
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let content = e.target.result;
+        
+                // --- 체크박스 상태 확인 및 치환 ---
+                
+                // 1. 🤖 라이트보드 제거
+                if (document.getElementById('chk-lightboard').checked) {
+                    content = content.replace(/<!-- Platform managed do not generate -->[\s\S]*?<!-- End platform managed -->/g, '');
+                }
+        
+                // 2. ⚙️ WNCS 제거
+                if (document.getElementById('chk-wncs').checked) {
+                    content = content.replace(/WNCS\{[\s\S]*?\}/g, '');
+                }
+        
+                // 3. 🖼️ NAI 태그 제거
+                if (document.getElementById('chk-nai').checked) {
+                    content = content.replace(/<lb-NAIimg>[\s\S]*?<\/lb-NAIimg>/g, '');
+                }
+        
+                // 4. 📝 '# 응답' 제거
+                if (document.getElementById('chk-response').checked) {
+                    content = content.replace(/# 응답/g, '');
+                }
+        
+                // 5. 🙊 *says nothing* 제거
+                if (document.getElementById('chk-saysnothing').checked) {
+                    content = content.replace(/\*says nothing\*/g, '');
+                }
+        
+                // 6. ✏️ 주석 제거
+                if (document.getElementById('chk-annotation').checked) {
+                    content = content.replace(/<!--[\s\S]*?-->/g, '');
+                }
+        
+                // 7. 📂 Details 태그 제거
+                if (document.getElementById('chk-details').checked) {
+                    content = content.replace(/<details>[\s\S]*?<\/details>/g, '');
+                }
+        
+                // 8. 🧹 빈 줄 제거
+                if (document.getElementById('chk-empty').checked) {
+                    content = content.replace(/^\s*[\r\n]/gm, '');
+                }
+        
+                // --- 블록 추가 및 저장 ---
+                blocks.push({
+                    type: 'text',
+                    content: content.trim(),
+                    visible: true
+                });
+        
+                renderBlocks();
+                updatePreview();
+                saveData();
+        
+                // 모달 닫기 및 알림
+                closeTxtImportModal();
+                alert("📥 텍스트 불러오기 완료!");
+                setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
+            };
+        
+            reader.readAsText(pendingTxtFile);
+        }
+
+        
+
+        /* =========================================
+           Bookmarklet Modal Logic
+           ========================================= */
+        function openBookmarkletModal() {
+            document.getElementById('bookmarkletModal').style.display = 'flex';
+            document.getElementById('pickerOverlay').style.display = 'block';
+        }
+
+        function closeBookmarkletModal() {
+            document.getElementById('bookmarkletModal').style.display = 'none';
+            document.getElementById('pickerOverlay').style.display = 'none';
+        }
 
     </script>
 </body>
