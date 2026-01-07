@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.7.2</title>
+    <title>로그 카드 생성기 v1.7.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1446,7 +1446,7 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.7.2</div>
+            <div class="editor-title">로그 카드 생성기 v1.7.3</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
@@ -1476,6 +1476,8 @@
                     onclick="setAllVisibility(false)" title="모두 숨기기">🙈All</button>
                 <button class="btn-reset" style="background:#fff7ed; color:#c2410c; border-color:#ffedd5;"
                     onclick="splitAllBlocks()" title="나누기">✂️All</button>
+                <button class="btn-reset" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" 
+                    onclick="mergeAllBlocks()" title="합치기">🧴All</button>
                 <button class="btn-reset" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;"
                     onclick="deleteAllBlocks()" title="삭제">🗑️All</button>
                 <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾
@@ -1925,7 +1927,7 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.7.2
+                © RenaMerdis v1.7.3
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
@@ -2049,7 +2051,7 @@
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_7_2_data'; // Updated for v1.7.2 compatibility
+        const STORAGE_KEY = 'LogCardv1_7_3_data'; // Updated for v1.7.3 compatibility
 
         // Default Color Palette
         let colors = {
@@ -2209,10 +2211,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.7.2)
+        // Default Block Content (v1.7.3)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.7.2
+# 로그 카드 생성기 v1.7.3
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2409,7 +2411,7 @@ __ __: 글자 1단계 작게
                     document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
                     document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.7.2)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.7.3)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -2975,7 +2977,7 @@ __ __: 글자 1단계 작게
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_7_2.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_7_3.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -3096,7 +3098,7 @@ __ __: 글자 1단계 작게
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_7_2_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_7_3_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -3290,7 +3292,7 @@ __ __: 글자 1단계 작게
         }
 
 
-        // HTML Save: Generates standalone HTML with v1.7.2 headers
+        // HTML Save: Generates standalone HTML with v1.7.3 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
@@ -3332,7 +3334,7 @@ __ __: 글자 1단계 작게
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.7.2)</title>
+<title>Log Card Export (v1.7.3)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
@@ -3634,11 +3636,15 @@ __ __: 글자 1단계 작게
         }
 
 
-        /* =========================================
-           Batch Split Logic
+       /* =========================================
+           Batch Split Logic (Updated)
            ========================================= */
         function splitAllBlocks() {
-            if (!confirm("모든 텍스트 블록 내의 '---'를 기준으로 나누시겠습니까?\n(나눠진 블록 사이의 '---'는 삭제됩니다)")) return;
+            // 1차 질문: 나누기 실행 여부
+            if (!confirm("모든 텍스트 블록 내의 '---'를 기준으로 나누시겠습니까?")) return;
+
+            // 2차 질문: 구분선 유지 여부 (확인=유지, 취소=삭제)
+            const keepSeparator = confirm("'---' 구분선을 유지하시겠습니까?\n\n[확인] : 구분선 유지 (블록 끝에 --- 남김)\n[취소] : 구분선 삭제 (텍스트만 남김)");
 
             let newBlocks = [];
             let splitCount = 0;
@@ -3649,9 +3655,16 @@ __ __: 글자 1단계 작게
                     // '---'를 기준으로 쪼개기
                     const parts = block.content.split('---');
 
-                    parts.forEach(part => {
-                        // 앞뒤 공백을 다듬고, 내용이 있는 경우에만 새 블록으로 추가
-                        const trimmedContent = part.trim();
+                    parts.forEach((part, index) => {
+                        let trimmedContent = part.trim();
+
+                        // [핵심 변경점] 구분선을 유지하겠다고 했으면, 
+                        // 마지막 조각이 아닌 경우 내용 뒤에 다시 ---를 붙여줍니다.
+                        if (keepSeparator && index < parts.length - 1) {
+                            trimmedContent += "\n---";
+                        }
+
+                        // 내용이 있는 경우에만 새 블록으로 추가
                         if (trimmedContent.length > 0) {
                             newBlocks.push({
                                 type: 'text',
@@ -3680,6 +3693,48 @@ __ __: 글자 1단계 작게
                 alert("나눌 수 있는 '---'가 포함된 블록이 없습니다.");
             }
         }
+
+        /* =========================================
+           Batch Merge Logic (🧴All)
+           ========================================= */
+        function mergeAllBlocks() {
+            if (!confirm("모든 텍스트 블록을 합치시겠습니까?\n(이미지 블록 사이의 텍스트끼리 뭉쳐집니다)")) return;
+
+            let newBlocks = [];
+            let mergedCount = 0;
+
+            blocks.forEach((block) => {
+                // 1. 아직 새 리스트에 아무것도 없거나, 현재 블록이 이미지면 그냥 추가
+                if (newBlocks.length === 0 || block.type !== 'text') {
+                    newBlocks.push(block);
+                    return; 
+                }
+
+                // 2. 현재 블록이 텍스트일 때, 직전 블록을 확인
+                let lastBlock = newBlocks[newBlocks.length - 1];
+
+                // 3. 직전 블록도 텍스트라면? -> 합치기!
+                if (lastBlock.type === 'text') {
+                    lastBlock.content += "\n" + block.content;
+                    mergedCount++;
+                } 
+                // 4. 직전 블록이 이미지였다면? -> 새로 추가
+                else {
+                    newBlocks.push(block);
+                }
+            });
+
+            if (mergedCount > 0) {
+                blocks = newBlocks;
+                renderBlocks();
+                updatePreview();
+                saveData();
+                alert(`총 ${mergedCount}번 합체 성공! 🧴`);
+            } else {
+                alert("합칠 수 있는 인접한 텍스트 블록이 없습니다.");
+            }
+        }
+        
 
         /* =========================================
            Delete All Blocks (Clear)
