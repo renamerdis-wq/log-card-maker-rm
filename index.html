@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.7.3</title>
+    <title>로그 카드 생성기 v1.8.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1446,7 +1446,7 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.7.3</div>
+            <div class="editor-title">로그 카드 생성기 v1.8.1</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
@@ -1482,6 +1482,9 @@
                     onclick="deleteAllBlocks()" title="삭제">🗑️All</button>
                 <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾
                     HTML 저장</button>
+                <button class="btn-save" style="background:#0f766e;" onclick="event.stopPropagation(); copySafeHtml()">
+                    📋 HTML 복사
+                </button>
                 <button class="btn-save" style="padding: 8px 10px;"
                     onclick="event.stopPropagation(); saveImage(this, 'standard')">📷 기본 저장</button>
                 <button class="btn-save" style="background:#334155; padding: 8px 10px;"
@@ -1927,7 +1930,7 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.7.3
+                © RenaMerdis v1.8.1
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
@@ -2051,7 +2054,7 @@
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_7_3_data'; // Updated for v1.7.3 compatibility
+        const STORAGE_KEY = 'LogCardv1_8_1_data'; // Updated for v1.8.1 compatibility
 
         // Default Color Palette
         let colors = {
@@ -2211,10 +2214,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.7.3)
+        // Default Block Content (v1.8.1)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.7.3
+# 로그 카드 생성기 v1.8.1
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2411,7 +2414,7 @@ __ __: 글자 1단계 작게
                     document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
                     document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.7.3)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.8.1)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -2977,7 +2980,7 @@ __ __: 글자 1단계 작게
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_7_3.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_8_1.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -3098,7 +3101,7 @@ __ __: 글자 1단계 작게
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_7_3_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_8_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -3292,7 +3295,7 @@ __ __: 글자 1단계 작게
         }
 
 
-        // HTML Save: Generates standalone HTML with v1.7.3 headers
+        // HTML Save: Generates standalone HTML with v1.8.1 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
@@ -3334,7 +3337,7 @@ __ __: 글자 1단계 작게
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.7.3)</title>
+<title>Log Card Export (v1.8.1)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
@@ -3929,6 +3932,169 @@ __ __: 글자 1단계 작게
         function closeBookmarkletModal() {
             document.getElementById('bookmarkletModal').style.display = 'none';
             document.getElementById('pickerOverlay').style.display = 'none';
+        }
+
+        /* =========================================
+           게시판용 인라인 HTML 복사 기능
+           ========================================= */
+        function copySafeHtml() {
+            // 1. 현재 설정값 가져오기
+            const widthVal = document.getElementById('cardWidthInput').value;
+            const paddingVal = document.getElementById('paddingRange').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const fontName = document.getElementById('fontSelect').value;
+            const align = document.getElementById('textAlignInput').value;
+            const paraSpacing = document.getElementById('paraSpacing').value;
+            const wordBreak = document.getElementById('wordBreakInput').value;
+            
+            // 이탤릭 설정 확인
+            const noItalic = document.getElementById('noItalic').checked;
+            const itStyle = noItalic ? 'normal' : 'italic';
+            const itWeight = noItalic ? document.getElementById('fontWeight').value : '700';
+            const itColor = noItalic ? colors.text : colors.it;
+        
+            // 2. 배경 스타일 생성
+            const c1 = hexToRgba(colors.bg1, 1);
+            const c2 = hexToRgba(colors.bg2, 1);
+            const ang = document.getElementById('gradAngle').value;
+            let bgStyle = `background: linear-gradient(${ang}deg, ${c1} 0%, ${c2} 100%);`;
+        
+            if (bgState.mode === 'image' && bgState.imgData) {
+                const overlay = hexToRgba(bgState.overlayColor, document.getElementById('overlayAlpha').value);
+                const sizeStyle = bgState.sizeMode === 'cover' ? 'cover' : `${bgState.scale}% auto`;
+                bgStyle = `
+                    background-image: linear-gradient(${overlay}, ${overlay}), url('${bgState.imgData}'), linear-gradient(${ang}deg, ${c1} 0%, ${c2} 100%);
+                    background-size: 100% 100%, ${sizeStyle}, 100% 100%;
+                    background-position: center, ${bgState.posX}% ${bgState.posY}%, center;
+                    background-repeat: no-repeat;
+                `;
+            }
+        
+            // 3. HTML 조립 (전체 래퍼)
+            let html = `<div style="width: ${widthVal}px; max-width: 100%; margin: 0 auto; padding: ${paddingVal}px; box-sizing: border-box; ${bgStyle} color: ${colors.text}; font-family: ${fontName}, sans-serif; font-size: ${fontSize}px; line-height: ${lineHeight}; text-align: ${align}; word-break: ${wordBreak};">`;
+        
+            // 4. 블록 순회하며 스타일 주입
+            blocks.forEach(b => {
+                // visible이 false일 때만 건너뜀 (undefined는 보이는 것으로 처리)
+                if (b.visible === false) return;
+        
+                if (b.type === 'image') {
+                    html += `<div style="text-align:center; margin-bottom:${paraSpacing}px;"><img src="${b.content}" style="width:${b.width || 100}%; border-radius:8px; display:inline-block;"></div>`;
+                } else {
+                    let tempDiv = document.createElement('div');
+                    // 파싱된 HTML을 임시 div에 넣음
+                    tempDiv.innerHTML = parseContent(b.content);
+        
+                    // P 태그 스타일 주입
+                    tempDiv.querySelectorAll('p').forEach(p => {
+                        p.style.margin = `0 0 ${paraSpacing}px 0`;
+                        p.style.lineHeight = lineHeight;
+                        // 클래스별 스타일 인라인화
+                        if (p.classList.contains('align-center')) p.style.textAlign = 'center';
+                        if (p.classList.contains('align-right')) p.style.textAlign = 'right';
+                        if (p.classList.contains('align-left')) p.style.textAlign = 'left';
+                        if (p.classList.contains('align-justify')) p.style.textAlign = 'justify';
+                        
+                        if (p.classList.contains('size-up-1')) p.style.fontSize = '1.2em';
+                        if (p.classList.contains('size-up-2')) p.style.fontSize = '1.4em';
+                        if (p.classList.contains('size-down-1')) { p.style.fontSize = '0.9em'; p.style.opacity = '0.9'; }
+                        if (p.classList.contains('size-down-2')) { p.style.fontSize = '0.8em'; p.style.opacity = '0.8'; }
+                    });
+        
+                    // 제목 태그 스타일 주입
+                    tempDiv.querySelectorAll('h1').forEach(h => { h.style.fontSize = '1.5em'; h.style.fontWeight = '800'; h.style.margin = `0 0 ${paraSpacing}px 0`; });
+                    tempDiv.querySelectorAll('h2').forEach(h => { h.style.fontSize = '1.2em'; h.style.fontWeight = '700'; h.style.margin = `0 0 ${paraSpacing}px 0`; });
+                    tempDiv.querySelectorAll('h3').forEach(h => { h.style.fontSize = '1.1em'; h.style.fontWeight = '700'; h.style.margin = `0 0 ${paraSpacing}px 0`; h.style.opacity = '0.9'; });
+        
+                    // 구분선 스타일 주입
+                    tempDiv.querySelectorAll('.parsed-hr').forEach(hr => { 
+                        hr.style.border = '0'; 
+                        hr.style.height = '1px'; 
+                        hr.style.background = colors.hr; 
+                        hr.style.margin = '1.5em 0'; 
+                    });
+        
+                    // 말풍선 레이아웃 스타일 주입
+                    tempDiv.querySelectorAll('.bubble-row').forEach(row => {
+                        row.style.display = 'flex';
+                        row.style.marginBottom = `${parseInt(paraSpacing) * 0.7}px`;
+                        row.style.width = '100%';
+                        if (row.classList.contains('left')) row.style.justifyContent = 'flex-start'; 
+                        else row.style.justifyContent = 'flex-end';
+                    });
+                    
+                    // 말풍선 본문 스타일 주입
+                    tempDiv.querySelectorAll('.bubble').forEach(bb => {
+                        bb.style.maxWidth = '85%'; 
+                        bb.style.padding = '0.6em 0.8em'; 
+                        bb.style.borderRadius = '0.6em'; 
+                        bb.style.fontSize = '1em'; 
+                        bb.style.wordBreak = 'break-all';
+                        
+                        if (bb.classList.contains('left')) { 
+                            bb.style.background = colors.bb_l_bg; 
+                            bb.style.color = colors.bb_l_tx; 
+                            bb.style.border = '1px solid rgba(0,0,0,0.05)'; 
+                            bb.style.borderTopLeftRadius = '2px'; 
+                        } else { 
+                            bb.style.background = colors.bb_r_bg; 
+                            bb.style.color = colors.bb_r_tx; 
+                            bb.style.borderTopRightRadius = '2px'; 
+                        }
+                    });
+        
+                    // 인라인 텍스트 스타일 주입 (Bold, Italic, Highlight 등)
+                    tempDiv.querySelectorAll('.parsed-bold').forEach(s => { s.style.fontWeight = '800'; s.style.color = colors.bd; });
+                    tempDiv.querySelectorAll('.parsed-italic').forEach(s => { s.style.color = itColor; s.style.fontStyle = itStyle; s.style.fontWeight = itWeight; });
+                    tempDiv.querySelectorAll('.parsed-thought').forEach(s => { s.style.color = colors.th; s.style.fontStyle = 'italic'; s.style.fontFamily = "'Ridibatang', serif"; });
+                    
+                    // 형광펜 효과
+                    tempDiv.querySelectorAll('.highlight-text').forEach(s => { 
+                        s.style.background = `linear-gradient(to bottom, transparent 40%, ${colors.hlbg} 40%)`; 
+                        s.style.fontWeight = '700'; 
+                        s.style.color = colors.hltx; 
+                        s.style.borderRadius = '2px'; 
+                        s.style.padding = '0 2px'; 
+                    });
+                    
+                    // 문자 메시지 박스
+                    tempDiv.querySelectorAll('.sms-box').forEach(s => { 
+                        s.style.background = colors.sms_bg; 
+                        s.style.color = colors.sms_tx; 
+                        s.style.border = '1px solid rgba(0,0,0,0.1)'; 
+                        s.style.borderRadius = '15px'; 
+                        s.style.padding = '2px 8px'; 
+                        s.style.display = 'inline-block'; 
+                        s.style.fontSize = '0.97em'; 
+                    });
+                    
+                    // 인용구
+                    tempDiv.querySelectorAll('.quote-text').forEach(s => { 
+                        s.style.color = colors.qt; 
+                        s.style.fontWeight = '700'; 
+                        s.style.display = 'block'; 
+                        s.style.margin = '0.5em 0'; 
+                        s.style.paddingLeft = '12px'; 
+                        s.style.borderLeft = `3px solid ${colors.qt}`; 
+                    });
+        
+                    // 완성된 내부 HTML을 메인 HTML에 추가
+                    html += tempDiv.innerHTML;
+                }
+            });
+        
+            html += `</div>`;
+        
+            // 5. 복사 실행
+            navigator.clipboard.writeText(html)
+                .then(() => {
+                    alert("✅ 게시판용 HTML 코드가 복사되었습니다!\n블로그나 게시판의 [HTML 모드]에 붙여넣으세요.");
+                })
+                .catch(err => {
+                    console.error("복사 실패:", err);
+                    prompt("⚠️ 자동 복사가 차단되었습니다. 아래 코드를 전체 복사(Ctrl+A, C)하세요:", html);
+                });
         }
 
     </script>
