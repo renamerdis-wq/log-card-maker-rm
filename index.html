@@ -3972,7 +3972,7 @@ __ __: 글자 1단계 작게
             }
         
             // 3. HTML 조립 (전체 래퍼)
-            let html = `<div style="width: ${widthVal}px; max-width: 100%; margin: 0 auto; padding: ${paddingVal}px; box-sizing: border-box; ${bgStyle} color: ${colors.text}; font-family: ${fontName}, sans-serif; font-size: ${fontSize}px; line-height: ${lineHeight}; text-align: ${align}; word-break: ${wordBreak};">`;
+            let html = `<div style="width: 100%; max-width: ${widthVal}px; margin: 0 auto; padding: ${paddingVal}px; box-sizing: border-box; ${bgStyle} color: ${colors.text}; font-family: ${fontName}, sans-serif; font-size: ${fontSize}px; line-height: ${lineHeight}; text-align: ${align}; word-break: ${wordBreak};">`;
         
             // 4. 블록 순회하며 스타일 주입
             blocks.forEach(b => {
