@@ -3935,9 +3935,8 @@ __ __: 글자 1단계 작게
         }
 
         /* =========================================
-           게시판용 HTML 복사 (반응형 레이아웃 적용)
-           - Width: max-width 사용으로 모바일 대응
-           - Padding: clamp() 사용으로 모바일에서 좌우 여백 축소
+           게시판용 HTML 복사
+           - outer div 속성 강화 (overflow: hidden, display: block)
            ========================================= */
         function copySafeHtml() {
             // 1. 현재 설정값 가져오기
@@ -3973,9 +3972,8 @@ __ __: 글자 1단계 작게
                 `;
             }
         
-            // 3. HTML 조립 (전체 래퍼) 
-            // width는 100%로 하되 max-width로 제한을 걸고, 
-            // padding은 clamp를 사용하여 좌우 여백을 유동적으로 조절.
+            // 3. HTML 조립 (전체 래퍼)
+            // display: block, overflow: hidden 추가하여 영역 강제 확보
             let html = `<div style="
                 width: 100%; 
                 max-width: ${widthVal}px; 
@@ -3989,6 +3987,8 @@ __ __: 글자 1단계 작게
                 line-height: ${lineHeight}; 
                 text-align: ${align}; 
                 word-break: ${wordBreak};
+                display: block;
+                overflow: hidden;
             ">`;
         
             // 4. 블록 순회하며 스타일 주입
@@ -3996,7 +3996,6 @@ __ __: 글자 1단계 작게
                 if (b.visible === false) return;
         
                 if (b.type === 'image') {
-                    // 이미지도 반응형으로 (max-width: 100%)
                     html += `<div style="text-align:center; margin-bottom:${paraSpacing}px;">
                         <img src="${b.content}" style="width:${b.width || 100}%; max-width: 100%; border-radius:8px; display:inline-block; height: auto;">
                     </div>`;
@@ -4049,16 +4048,20 @@ __ __: 글자 1단계 작게
                     html += tempDiv.innerHTML;
                 }
             });
+            
+            // 닫는 태그 확인
             html += `</div>`;
+            
+            const finalHtml = `<div style="width:100%; text-align:center;">${html}</div>`;
         
-            // 5. 복사 실행
-            navigator.clipboard.writeText(html)
+            // 5. 복사 실행 (finalHtml 사용)
+            navigator.clipboard.writeText(finalHtml)
                 .then(() => {
-                    alert("✅ 게시판용 HTML 코드가 복사되었습니다!\n이제 모바일에서도 예쁘게 보일 거예요.");
+                    alert("✅ 게시판용 HTML 코드가 복사되었습니다!");
                 })
                 .catch(err => {
                     console.error("복사 실패:", err);
-                    prompt("⚠️ 자동 복사가 차단되었습니다. 아래 코드를 전체 복사(Ctrl+A, C)하세요:", html);
+                    prompt("⚠️ 자동 복사 실패. 아래 코드를 전체 복사(Ctrl+A, C)하세요:", finalHtml);
                 });
         }
 
