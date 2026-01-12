@@ -3935,7 +3935,9 @@ __ __: 글자 1단계 작게
         }
 
         /* =========================================
-           게시판용 인라인 HTML 복사 기능
+           게시판용 HTML 복사 (반응형 레이아웃 적용)
+           - Width: max-width 사용으로 모바일 대응
+           - Padding: clamp() 사용으로 모바일에서 좌우 여백 축소
            ========================================= */
         function copySafeHtml() {
             // 1. 현재 설정값 가져오기
@@ -3971,26 +3973,41 @@ __ __: 글자 1단계 작게
                 `;
             }
         
-            // 3. HTML 조립 (전체 래퍼)
-            let html = `<div style="width: ${widthVal}px; max-width: 100%; margin: 0 auto; padding: ${paddingVal}px; box-sizing: border-box; ${bgStyle} color: ${colors.text}; font-family: ${fontName}, sans-serif; font-size: ${fontSize}px; line-height: ${lineHeight}; text-align: ${align}; word-break: ${wordBreak};">`;
+            // 3. HTML 조립 (전체 래퍼) 
+            // width는 100%로 하되 max-width로 제한을 걸고, 
+            // padding은 clamp를 사용하여 좌우 여백을 유동적으로 조절.
+            let html = `<div style="
+                width: 100%; 
+                max-width: ${widthVal}px; 
+                margin: 0 auto; 
+                padding: ${paddingVal}px clamp(20px, 5%, ${paddingVal}px); 
+                box-sizing: border-box; 
+                ${bgStyle} 
+                color: ${colors.text}; 
+                font-family: ${fontName}, sans-serif; 
+                font-size: ${fontSize}px; 
+                line-height: ${lineHeight}; 
+                text-align: ${align}; 
+                word-break: ${wordBreak};
+            ">`;
         
             // 4. 블록 순회하며 스타일 주입
             blocks.forEach(b => {
-                // visible이 false일 때만 건너뜀 (undefined는 보이는 것으로 처리)
                 if (b.visible === false) return;
         
                 if (b.type === 'image') {
-                    html += `<div style="text-align:center; margin-bottom:${paraSpacing}px;"><img src="${b.content}" style="width:${b.width || 100}%; border-radius:8px; display:inline-block;"></div>`;
+                    // 이미지도 반응형으로 (max-width: 100%)
+                    html += `<div style="text-align:center; margin-bottom:${paraSpacing}px;">
+                        <img src="${b.content}" style="width:${b.width || 100}%; max-width: 100%; border-radius:8px; display:inline-block; height: auto;">
+                    </div>`;
                 } else {
                     let tempDiv = document.createElement('div');
-                    // 파싱된 HTML을 임시 div에 넣음
                     tempDiv.innerHTML = parseContent(b.content);
         
-                    // P 태그 스타일 주입
+                    // P 태그 스타일
                     tempDiv.querySelectorAll('p').forEach(p => {
                         p.style.margin = `0 0 ${paraSpacing}px 0`;
                         p.style.lineHeight = lineHeight;
-                        // 클래스별 스타일 인라인화
                         if (p.classList.contains('align-center')) p.style.textAlign = 'center';
                         if (p.classList.contains('align-right')) p.style.textAlign = 'right';
                         if (p.classList.contains('align-left')) p.style.textAlign = 'left';
@@ -4002,94 +4019,42 @@ __ __: 글자 1단계 작게
                         if (p.classList.contains('size-down-2')) { p.style.fontSize = '0.8em'; p.style.opacity = '0.8'; }
                     });
         
-                    // 제목 태그 스타일 주입
+                    // 제목/구분선 스타일
                     tempDiv.querySelectorAll('h1').forEach(h => { h.style.fontSize = '1.5em'; h.style.fontWeight = '800'; h.style.margin = `0 0 ${paraSpacing}px 0`; });
                     tempDiv.querySelectorAll('h2').forEach(h => { h.style.fontSize = '1.2em'; h.style.fontWeight = '700'; h.style.margin = `0 0 ${paraSpacing}px 0`; });
                     tempDiv.querySelectorAll('h3').forEach(h => { h.style.fontSize = '1.1em'; h.style.fontWeight = '700'; h.style.margin = `0 0 ${paraSpacing}px 0`; h.style.opacity = '0.9'; });
+                    tempDiv.querySelectorAll('.parsed-hr').forEach(hr => { hr.style.border = '0'; hr.style.height = '1px'; hr.style.background = colors.hr; hr.style.margin = '1.5em 0'; });
         
-                    // 구분선 스타일 주입
-                    tempDiv.querySelectorAll('.parsed-hr').forEach(hr => { 
-                        hr.style.border = '0'; 
-                        hr.style.height = '1px'; 
-                        hr.style.background = colors.hr; 
-                        hr.style.margin = '1.5em 0'; 
-                    });
-        
-                    // 말풍선 레이아웃 스타일 주입
+                    // 말풍선 스타일
                     tempDiv.querySelectorAll('.bubble-row').forEach(row => {
                         row.style.display = 'flex';
                         row.style.marginBottom = `${parseInt(paraSpacing) * 0.7}px`;
                         row.style.width = '100%';
-                        if (row.classList.contains('left')) row.style.justifyContent = 'flex-start'; 
-                        else row.style.justifyContent = 'flex-end';
+                        if (row.classList.contains('left')) row.style.justifyContent = 'flex-start'; else row.style.justifyContent = 'flex-end';
                     });
-                    
-                    // 말풍선 본문 스타일 주입
                     tempDiv.querySelectorAll('.bubble').forEach(bb => {
-                        bb.style.maxWidth = '85%'; 
-                        bb.style.padding = '0.6em 0.8em'; 
-                        bb.style.borderRadius = '0.6em'; 
-                        bb.style.fontSize = '1em'; 
-                        bb.style.wordBreak = 'break-all';
-                        
-                        if (bb.classList.contains('left')) { 
-                            bb.style.background = colors.bb_l_bg; 
-                            bb.style.color = colors.bb_l_tx; 
-                            bb.style.border = '1px solid rgba(0,0,0,0.05)'; 
-                            bb.style.borderTopLeftRadius = '2px'; 
-                        } else { 
-                            bb.style.background = colors.bb_r_bg; 
-                            bb.style.color = colors.bb_r_tx; 
-                            bb.style.borderTopRightRadius = '2px'; 
-                        }
+                        bb.style.maxWidth = '85%'; bb.style.padding = '0.6em 0.8em'; bb.style.borderRadius = '0.6em'; bb.style.fontSize = '1em'; bb.style.wordBreak = 'break-all';
+                        if (bb.classList.contains('left')) { bb.style.background = colors.bb_l_bg; bb.style.color = colors.bb_l_tx; bb.style.border = '1px solid rgba(0,0,0,0.05)'; bb.style.borderTopLeftRadius = '2px'; }
+                        else { bb.style.background = colors.bb_r_bg; bb.style.color = colors.bb_r_tx; bb.style.borderTopRightRadius = '2px'; }
                     });
         
-                    // 인라인 텍스트 스타일 주입 (Bold, Italic, Highlight 등)
+                    // 인라인 스타일 (강조, 이탤릭 등)
                     tempDiv.querySelectorAll('.parsed-bold').forEach(s => { s.style.fontWeight = '800'; s.style.color = colors.bd; });
                     tempDiv.querySelectorAll('.parsed-italic').forEach(s => { s.style.color = itColor; s.style.fontStyle = itStyle; s.style.fontWeight = itWeight; });
                     tempDiv.querySelectorAll('.parsed-thought').forEach(s => { s.style.color = colors.th; s.style.fontStyle = 'italic'; s.style.fontFamily = "'Ridibatang', serif"; });
-                    
-                    // 형광펜 효과
-                    tempDiv.querySelectorAll('.highlight-text').forEach(s => { 
-                        s.style.background = `linear-gradient(to bottom, transparent 40%, ${colors.hlbg} 40%)`; 
-                        s.style.fontWeight = '700'; 
-                        s.style.color = colors.hltx; 
-                        s.style.borderRadius = '2px'; 
-                        s.style.padding = '0 2px'; 
-                    });
-                    
-                    // 문자 메시지 박스
-                    tempDiv.querySelectorAll('.sms-box').forEach(s => { 
-                        s.style.background = colors.sms_bg; 
-                        s.style.color = colors.sms_tx; 
-                        s.style.border = '1px solid rgba(0,0,0,0.1)'; 
-                        s.style.borderRadius = '15px'; 
-                        s.style.padding = '2px 8px'; 
-                        s.style.display = 'inline-block'; 
-                        s.style.fontSize = '0.97em'; 
-                    });
-                    
-                    // 인용구
-                    tempDiv.querySelectorAll('.quote-text').forEach(s => { 
-                        s.style.color = colors.qt; 
-                        s.style.fontWeight = '700'; 
-                        s.style.display = 'block'; 
-                        s.style.margin = '0.5em 0'; 
-                        s.style.paddingLeft = '12px'; 
-                        s.style.borderLeft = `3px solid ${colors.qt}`; 
-                    });
+                    tempDiv.querySelectorAll('.highlight-text').forEach(s => { s.style.background = `linear-gradient(to bottom, transparent 40%, ${colors.hlbg} 40%)`; s.style.fontWeight = '700'; s.style.color = colors.hltx; s.style.borderRadius = '2px'; s.style.padding = '0 2px'; });
+                    tempDiv.querySelectorAll('.sms-box').forEach(s => { s.style.background = colors.sms_bg; s.style.color = colors.sms_tx; s.style.border = '1px solid rgba(0,0,0,0.1)'; s.style.borderRadius = '15px'; s.style.padding = '2px 8px'; s.style.display = 'inline-block'; s.style.fontSize = '0.97em'; });
+                    tempDiv.querySelectorAll('.quote-text').forEach(s => { s.style.color = colors.qt; s.style.fontWeight = '700'; s.style.display = 'block'; s.style.margin = '0.5em 0'; s.style.paddingLeft = '12px'; s.style.borderLeft = `3px solid ${colors.qt}`; });
         
-                    // 완성된 내부 HTML을 메인 HTML에 추가
                     html += tempDiv.innerHTML;
                 }
             });
-        
             html += `</div>`;
         
             // 5. 복사 실행
             navigator.clipboard.writeText(html)
                 .then(() => {
-                    alert("✅ 게시판용 HTML 코드가 복사되었습니다!\n블로그나 게시판의 [HTML 모드]에 붙여넣으세요.");
+                    alert("✅ 게시판용 HTML 코드가 복사되었습니다!\n이제 모바일에서도 예쁘게 보일 거예요.");
                 })
                 .catch(err => {
                     console.error("복사 실패:", err);
