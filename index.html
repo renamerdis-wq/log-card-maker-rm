@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.8.1</title>
+    <title>로그 카드 생성기 v1.9.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1418,6 +1418,128 @@
             /* 파란색 (테마색) */
             cursor: pointer;
         }
+
+        /* =========================================
+           [NEW] WNCS 댓글창 스타일 (사용자 비율 조절 적용)
+           ========================================= */
+        /* 핵심: font-size를 calc(var(--base-sz) * var(--wncs-scale))로 설정하여
+           전체 폰트 크기(--base-sz)와 댓글 비율(--wncs-scale)에 따라 유동적으로 변하게 함.
+        */
+        .wncs-details { 
+            background: #1e1e1e; 
+            margin: 15px 0; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            font-family: 'Noto Sans KR', sans-serif; 
+            text-align: left;
+            font-size: calc(var(--base-sz, 45px) * var(--wncs-scale, 0.35)); /* 여기가 핵심! */
+            line-height: 1.6;
+        }
+        
+        /* 이제 내부는 1em 기준으로 작성하면 부모 크기를 따라갑니다 */
+        .wncs-summary { cursor: pointer; padding: 0.5em 1.2em; font-weight: bold; font-size: 1em; color: #e0e0e0; background: #282828; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; transition: .2s; }
+        .wncs-summary-ep { font-weight: 400; font-size: 0.9em; color: #bbbbbb; }
+        .wncs-details .wncs-summary:hover { background: #303030; }
+        .wncs-details[open] .wncs-summary { border-bottom: 1px solid #333; }
+        
+        .wncs-container { padding: 1em 1.4em; color: #c9c9c9; background: #222; border-radius: 0 0 8px 8px; }
+        
+        .wncs-author-note { background: #191919; padding: 0.4em 1em 0.9em 1em; border: 1px solid #333; border-radius: 6px; margin-bottom: 1em; }
+        .wncs-author-title { font-size: 0.9em; font-weight: 600; color: #26f2a4; margin-bottom: 0.1em; }
+        .wncs-author-content { font-size: 0.95em; line-height: 1.8; color: #d0d0d0; white-space: pre-wrap; }
+        
+        .wncs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.7em; padding-bottom: 0.7em; border-bottom: 1px solid #383838; }
+        .wncs-header h2 { font-size: 1.4em; color: #e0e0e0; margin: 0; }
+        .wncs-header-filters span { margin-left: 1em; cursor: pointer; color: #aaa; font-size: 1em; padding: 0.3em 0.6em; border-radius: 4px; }
+        .wncs-filter-active { color: #e0e0e0; font-weight: bold; background: #333; }
+        
+        .wncs-comment-thread { margin-bottom: 0.7em; }
+        .wncs-comment { border-bottom: 1px dotted #444; }
+        .wncs-main-comment { padding: 0; }
+        
+        .wncs-best-badge { background: transparent; color: #3bff8a; border: 1px solid #3bff8a; padding: 0.1em 0.5em; font-size: 0.75em; line-height: 1; font-weight: bold; border-radius: 9999px; margin-right: 0.4em; vertical-align: middle; }
+        
+        .wncs-comment-meta { display: flex; align-items: center; font-size: 0.9em; color: #aaa; margin-bottom: 0.2em; }
+        .wncs-nickname { color: #c9c9c9; font-weight: 450; margin-right: 0.7em; }
+        .wncs-date { margin-left: auto; margin-right: 0.4em; font-size: 0.9em; color: #888; }
+        .wncs-options-button { color: #777; font-size: 1.1em; padding: 0 0.3em; background: none; border: none; cursor: pointer; }
+        
+        .wncs-comment-content { font-size: 1em; line-height: 1.6; color: #f5f5f5; white-space: pre-wrap; }
+        
+        .wncs-comment-actions { margin-top: 0.3em; display: flex; align-items: center; font-size: 1em; padding-bottom: 0.6em; }
+        .wncs-episode { font-size: 0.85em; color: #888; margin-right: auto; }
+        .wncs-like-button, .wncs-reply-button { background: none; border: none; color: #999; cursor: pointer; padding: 0.3em 0.6em; display: inline-flex; align-items: center; border-radius: 4px; transition: .2s; font-size: 1em; }
+        .wncs-like-button { margin-right: 0.3em; }
+        .wncs-like-icon, .wncs-reply-icon { font-size: 1.1em; margin-right: 0.3em; }
+        
+        .wncs-reply-toggle-checkbox { position: absolute; left: -9999px; width: 0; height: 0; opacity: 0; }
+        .wncs-replies-container { display: none; margin-left: 1.8em; border-left: 2px solid #404040; margin-top: 0.7em; }
+        .wncs-reply-toggle-checkbox:checked ~ .wncs-replies-container { display: block; }
+        .wncs-replies-elevated { background: #262626; border-left: 3px solid #3b8c6e; border-radius: 6px; margin: 0.7em 0 1.2em 0; padding: 0.8em 1.2em; box-shadow: 0 2px 4px rgba(0,0,0,.35); }
+        .wncs-reply-comment { padding: 0.6em 0; border-bottom: 1px solid #3a3a3a; }
+        .wncs-reply-comment:first-child { padding-top: 0; }
+        .wncs-reply-comment:last-child { padding-bottom: 0; border-bottom: none; }
+        .wncs-reply-comment .wncs-nickname { font-size: 0.9em; }       
+        /* ── 상단 요약 ── */
+        .wncs-summary { cursor: pointer; padding: 6px 18px; font-weight: bold; font-size: 0.35em; color: #e0e0e0; background: #282828; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; transition: .2s; }
+        .wncs-summary-ep { font-weight: 400; font-size: 0.9em; color: #bbbbbb; } /* 부모 대비 0.9 */
+        .wncs-details .wncs-summary:hover { background: #303030; }
+        .wncs-details[open] .wncs-summary { border-bottom: 1px solid #333; }
+        
+        /* ── 컨테이너 ── */
+        .wncs-container { padding: 15px 20px; color: #c9c9c9; background: #222; border-radius: 0 0 8px 8px; }
+        
+        /* ── 작가의 말 ── */
+        .wncs-author-note { background: #191919; padding: 5px 14px 12px 14px; border: 1px solid #333; border-radius: 6px; margin-bottom: 14px; }
+        .wncs-author-title { font-size: 0.3em; font-weight: 600; color: #26f2a4; margin-bottom: 1px; }
+        .wncs-author-content { font-size: 0.3em; line-height: 1.8; color: #d0d0d0; white-space: pre-wrap; }
+        
+        /* ── 헤더 (댓글 수) ── */
+        .wncs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #383838; }
+        .wncs-header h2 { font-size: 0.5em; color: #e0e0e0; margin: 0; }
+        .wncs-header-filters span { margin-left: 15px; cursor: pointer; color: #aaa; font-size: 0.35em; padding: 4px 8px; border-radius: 4px; }
+        .wncs-filter-active { color: #e0e0e0; font-weight: bold; background: #333; }
+        
+        /* ── 댓글 ── */
+        .wncs-comment-thread { margin-bottom: 10px; }
+        .wncs-comment { border-bottom: 1px dotted #444; }
+        .wncs-main-comment { padding: 0; }
+        
+        /* BEST 뱃지 */
+        .wncs-best-badge { background: transparent; color: #3bff8a; border: 1px solid #3bff8a; padding: 2px 8px; font-size: 0.25em; line-height: 1; font-weight: bold; border-radius: 9999px; margin-right: 5px; vertical-align: middle; }
+        
+        /* 메타 정보 */
+        .wncs-comment-meta { display: flex; align-items: center; font-size: 0.3em; color: #aaa; margin-bottom: 2px; }
+        .wncs-nickname { color: #c9c9c9; font-weight: 450; margin-right: 10px; }
+        .wncs-date { margin-left: auto; margin-right: 6px; font-size: 0.9em; color: #888; }
+        .wncs-options-button { color: #777; font-size: 1.2em; padding: 0 5px; background: none; border: none; cursor: pointer; }
+        
+        /* 본문 (핵심: 0.35em = 기본 45px일 때 약 15.75px) */
+        .wncs-comment-content { font-size: 0.35em; line-height: 1.6; color: #f5f5f5; white-space: pre-wrap; }
+        
+        /* 액션 라인 */
+        .wncs-comment-actions { margin-top: 4px; display: flex; align-items: center; font-size: 0.35em; padding-bottom: 8px; }
+        .wncs-episode { font-size: 0.8em; color: #888; margin-right: auto; }
+        .wncs-like-button, .wncs-reply-button { background: none; border: none; color: #999; cursor: pointer; padding: 4px 8px; display: inline-flex; align-items: center; border-radius: 4px; transition: .2s; font-size: 1em; }
+        .wncs-like-button { margin-right: 4px; }
+        .wncs-like-icon, .wncs-reply-icon { font-size: 1.1em; margin-right: 5px; }
+        
+        /* 대댓글 */
+        .wncs-reply-toggle-checkbox { position: absolute; left: -9999px; width: 0; height: 0; opacity: 0; }
+        .wncs-replies-container { display: none; margin-left: 25px; border-left: 2px solid #404040; margin-top: 10px; }
+        .wncs-reply-toggle-checkbox:checked ~ .wncs-replies-container { display: block; }
+        .wncs-replies-elevated { background: #262626; border-left: 3px solid #3b8c6e; border-radius: 6px; margin: 10px 0 18px 0px; padding: 12px 18px; box-shadow: 0 2px 4px rgba(0,0,0,.35); }
+        .wncs-reply-comment { padding: 8px 0; border-bottom: 1px solid #3a3a3a; }
+        .wncs-reply-comment:first-child { padding-top: 0; }
+        .wncs-reply-comment:last-child { padding-bottom: 0; border-bottom: none; }
+        .wncs-reply-comment .wncs-nickname { font-size: 0.9em; } /* 대댓글 닉네임 */
+        
+      /* [시스템 유틸리티] 이 클래스가 붙으면 슬라이더 값에 따라 크기가 변함 */
+        .scale-box {
+            zoom: var(--css-scale, 1);
+            transform-origin: top left; /* 혹시 모를 transform 대비 */
+}  
+                
     </style>
 </head>
 
@@ -1446,7 +1568,7 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.8.1</div>
+            <div class="editor-title">로그 카드 생성기 v1.9.1</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
@@ -1467,9 +1589,11 @@
                     style="display: none;">
 
                 <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;"
-                    onclick="openRegexModal(-1)" title="정규식">®️</button>
+                    onclick="openRegexModal(-1)" title="정규식">®️정규식</button>
+                <button class="btn-reset" style="background:#e0e7ff; color:#4338ca; border-color:#c7d2fe;"
+                    onclick="openCssModal()" title="사용자 CSS 추가">✨CSS</button>
                 <button class="btn-reset" style="background:#fffbeb; color:#b45309; border-color:#fcd34d;"
-                    onclick="openBookmarkletModal()" title="케이브덕 저장 북마크릿 만들기">🔖 북마크릿 생성</button>
+                    onclick="openBookmarkletModal()" title="케이브덕 저장 북마크릿 만들기">🔖북마크릿 생성</button>
                 <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;"
                     onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
                 <button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca;"
@@ -1730,6 +1854,20 @@
 
                     <div class="style-row">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>🧩 커스텀/CSS 배율:</span>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <input type="number" id="input-cssScale" class="val-display" value="1.0" step="0.1"
+                                    style="width:55px; border:1px solid #e2e8f0; border-radius:4px; text-align:right;"
+                                    oninput="syncSlider('cssScale', this.value)"> (배)
+                            </div>
+                        </div>
+                        <input type="range" id="cssScale" min="0.5" max="3.0" step="0.1" value="1.0"
+                            oninput="syncInput('cssScale', this.value)">
+                    </div>
+                                        
+
+                    <div class="style-row">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span>글자 굵기:</span>
                             <div style="display:flex; align-items:center; gap:5px;">
                                 <input type="number" id="input-fontWeight" class="val-display" value="400" step="100"
@@ -1742,7 +1880,23 @@
                         <input type="range" id="fontWeight" min="100" max="900" step="100" value="400"
                             oninput="syncInput('fontWeight', this.value)">
                     </div>
+                    
+                    <div class="style-row">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>댓글 크기 비율:</span>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <input type="number" id="input-wncsScale" class="val-display" value="35"
+                                    style="width:55px; border:1px solid #e2e8f0; border-radius:4px; text-align:right;"
+                                    oninput="syncSlider('wncsScale', this.value)"> %
+                                <input type="checkbox" class="lock-chk" title="잠금"
+                                    onchange="const d=this.checked; document.getElementById('wncsScale').disabled=d; document.getElementById('input-wncsScale').disabled=d;">
+                            </div>
+                        </div>
+                        <input type="range" id="wncsScale" min="10" max="150" step="1" value="35"
+                            oninput="syncInput('wncsScale', this.value)">
+                    </div>
 
+                    
                     <div class="style-row">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span>줄 간격:</span>
@@ -1930,7 +2084,7 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.8.1
+                © RenaMerdis v1.9.1
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
@@ -1983,6 +2137,17 @@
             <button class="btn-regex-preset" onclick="addRegexRule('empty')">🧹 공백 줄 제거</button>
         </div>
 
+        <div style="margin-top:10px; padding:10px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; font-size:12px; color:#0369a1; line-height:1.4;">
+            <b>📢 배율 조절 팁:</b><br>
+            '바꿀 내용(OUT)'을 작성해서 HTML을 적용할 때, 가장 바깥쪽 태그(div 등)의 class에 <code>scale-box</code>를 추가해보세요.<br>
+            메인 화면의 <b>[커스텀/CSS 배율]</b> 슬라이더로 크기를 자유롭게 조절할 수 있습니다!<br>
+            <div style="margin-top:4px; font-family:monospace; background:rgba(255,255,255,0.5); padding:4px; border-radius:4px;">
+                예시: &lt;div class="my-status <b>scale-box</b>"&gt;...&lt;/div&gt;
+            </div>
+        </div>
+
+        
+
         <div id="regexListContainer">
         </div>
 
@@ -1993,6 +2158,33 @@
             <button class="btn-regex-run" onclick="executeRegexQueue(true)">🌍 전체 일괄 적용</button>
         </div>
     </div>
+
+    <div id="cssModal" style="display:none; flex-direction:column; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:3000; width:500px; max-width:90%; height:600px; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); padding:20px; animation: modalPop 0.3s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            <span style="font-size:18px; font-weight:800;">🎨 사용자 정의 CSS</span>
+            <button onclick="closeCssModal()" style="border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
+        </div>
+        
+<div style="font-size:12px; color:#666; margin-bottom:10px; line-height:1.5;">
+    여기에 입력한 CSS는 <b>미리보기</b>와 <b>HTML 저장</b> 시 적용됩니다.<br>
+    <code>.status-card { ... }</code> 처럼 클래스 스타일을 정의하세요.<br><br>
+    
+    <span style="background:#fffbeb; color:#b45309; padding:2px 6px; border-radius:4px; font-weight:bold;">💡 꿀팁</span>
+    CSS를 적용하려는 HTML의 가장 바깥쪽 태그 클래스에 <code>scale-box</code>를 한 칸 띄우고 적어주세요.<br>
+    그러면 <b>'커스텀/CSS 배율'</b> 슬라이더가 작동됩니다.<br>
+    <span style="color:#059669; font-family:monospace;">예시: &lt;div class="status-card scale-box"&gt;</span>
+</div>
+
+        <textarea id="customCssInput" 
+            style="flex:1; width:100%; background:#1e1e1e; color:#d4d4d4; font-family:monospace; padding:15px; border-radius:8px; border:none; resize:none; font-size:13px; line-height:1.5;"
+            placeholder="/* 여기에 CSS 코드를 붙여넣으세요 */"
+            oninput="applyCustomCss(this.value)"></textarea>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
+            <button class="btn-save" onclick="closeCssModal()">닫기 (자동적용됨)</button>
+        </div>
+    </div>
+    
 
     <div id="txtImportModal" style="display:none; flex-direction:column; gap:15px; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:3000; width:400px; padding:24px; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
     
@@ -2054,7 +2246,7 @@
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_8_1_data'; // Updated for v1.8.1 compatibility
+        const STORAGE_KEY = 'LogCardv1_9_1_data'; // Updated for v1.9.1 compatibility
 
         // Default Color Palette
         let colors = {
@@ -2214,10 +2406,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.8.1)
+        // Default Block Content (v1.9.1)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.8.1
+# 로그 카드 생성기 v1.9.1
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2376,6 +2568,7 @@ __ __: 글자 1단계 작게
         function saveData() {
             const data = {
                 colors, bgState, blocks, presets,
+                customCss: userCustomCss,
                 settings: {
                     width: document.getElementById('cardWidthInput').value,
                     padding: document.getElementById('paddingRange').value,
@@ -2388,6 +2581,8 @@ __ __: 글자 1단계 작게
                     paraSpacing: document.getElementById('paraSpacing').value,
                     textAlign: document.getElementById('textAlignInput').value,
                     wordBreak: document.getElementById('wordBreakInput').value,
+                    cssScale: document.getElementById('cssScale').value,
+                    wncsScale: document.getElementById('wncsScale').value, // 추가
                     noItalic: document.getElementById('noItalic').checked
                 }
             };
@@ -2406,6 +2601,12 @@ __ __: 글자 1단계 작게
                 if (data.bgState) bgState = data.bgState;
                 if (data.blocks) blocks = data.blocks;
                 if (data.presets) presets = data.presets;
+                if (data.settings.cssScale) {
+                    document.getElementById('cssScale').value = data.settings.cssScale;
+                    updateVal('cssScale', data.settings.cssScale); // 숫자창 동기화 (updateVal 함수가 있다면)
+                    if(document.getElementById('input-cssScale')) document.getElementById('input-cssScale').value = data.settings.cssScale;
+                }
+                        
                 if (data.settings) {
                     document.getElementById('cardWidthInput').value = data.settings.width || 1080;
                     document.getElementById('paddingRange').value = data.settings.padding || 90;
@@ -2413,8 +2614,10 @@ __ __: 글자 1단계 작게
                     document.getElementById('fontWeight').value = data.settings.fontWeight || 400;
                     document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
                     document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
+                    document.getElementById('wncsScale').value = data.settings.wncsScale || 35; // 추가
+                    document.getElementById('input-wncsScale').value = data.settings.wncsScale || 35; // 추가
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.8.1)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.9.1)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -2443,6 +2646,11 @@ __ __: 글자 1단계 작게
                 updateVal('paraSpacing', document.getElementById('paraSpacing').value);
                 updateVal('paddingRange', document.getElementById('paddingRange').value);
 
+                if (data.customCss) {
+                    userCustomCss = data.customCss;
+                    applyCustomCss(userCustomCss);
+                }
+
                 if (bgState.mode === 'image') {
                     document.getElementById('showImgOption').checked = true;
                     toggleImgPanel(true, false);
@@ -2465,6 +2673,101 @@ __ __: 글자 1단계 작게
         }
 
         /* =========================================
+           [NEW] WNCS 변환 로직 (순수 함수)
+           ========================================= */
+        function renderWNCS(rawData) {
+            if (!rawData.startsWith("WNCS{")) return rawData;
+        
+            // 1. 내용 정제
+            let content = rawData.substring(5, rawData.lastIndexOf('}'));
+            let lines = content.split('\n').filter(line => line.trim() !== '');
+        
+            // 2. 데이터 구조화
+            let globalInfo = { title: "댓글창", count: "0" };
+            let authorNote = "";
+            let comments = [];
+            let currentMainComment = null;
+        
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('GN:')) {
+                    let info = line.substring(3);
+                    let splitIdx = info.indexOf('-');
+                    if (splitIdx !== -1) {
+                        globalInfo.count = info.substring(0, splitIdx).trim();
+                        globalInfo.title = info.substring(splitIdx + 1).trim();
+                    } else { globalInfo.count = info; }
+                } 
+                else if (line.startsWith('AN:')) { authorNote = line.substring(3).trim(); } 
+                else if (line.startsWith('R:|')) {
+                    if (currentMainComment) {
+                        let parts = line.split('|');
+                        if (parts.length >= 3) {
+                            currentMainComment.replies.push({ nick: parts[1], content: parts.slice(2).join('|') });
+                        }
+                    }
+                } 
+                else if (line.includes('|')) {
+                    let parts = line.split('|');
+                    if (parts.length >= 5) {
+                        let newComment = {
+                            nick: parts[0], date: parts[1], isBest: parts[2] === 'Y',
+                            likes: parts[3], content: parts.slice(4).join('|'), replies: []
+                        };
+                        comments.push(newComment);
+                        currentMainComment = newComment;
+                    }
+                }
+            });
+        
+            // 3. HTML 조립 (문자열 반환)
+            let html = `
+            <details class="wncs-details" open>
+                <summary class="wncs-summary"><span>댓글 모음</span><span class="wncs-summary-ep">${globalInfo.title}</span></summary>
+                <div class="wncs-container">
+                    ${authorNote ? `<div class="wncs-author-note"><div class="wncs-author-title">작가의 말</div><div class="wncs-author-content">${authorNote}</div></div>` : ''}
+                    <div class="wncs-header"><h2>${globalInfo.count}</h2><div class="wncs-header-filters"><span class="wncs-filter-active">추천순</span><span>최신순</span></div></div>
+                    <div class="wncs-comment-list">`;
+        
+            comments.forEach((cmt, idx) => {
+                const uniqueId = `reply-toggle-${Date.now()}-${idx}`; // 고유 ID 생성
+                const bestBadge = cmt.isBest ? `<span class="wncs-best-badge">BEST</span>` : '';
+                
+                let repliesHtml = '';
+                if (cmt.replies.length > 0) {
+                    repliesHtml = `
+                    <input type="checkbox" id="${uniqueId}" class="wncs-reply-toggle-checkbox">
+                    <div class="wncs-replies-container"><div class="wncs-replies-elevated">
+                        ${cmt.replies.map(r => `
+                        <div class="wncs-reply-comment">
+                            <div class="wncs-comment-meta"><span class="wncs-nickname">${r.nick}</span><button class="wncs-options-button">⋮</button></div>
+                            <div class="wncs-comment-content">${r.content}</div>
+                        </div>`).join('')}
+                    </div></div>`;
+                }
+        
+                html += `
+                <div class="wncs-comment-thread">
+                    <div class="wncs-comment wncs-main-comment">
+                        <div class="wncs-comment-meta">${bestBadge}<span class="wncs-nickname">${cmt.nick}</span><span class="wncs-date">${cmt.date}</span><button class="wncs-options-button">⋮</button></div>
+                        <div class="wncs-comment-content">${cmt.content}</div>
+                        <div class="wncs-comment-actions">
+                            <span class="wncs-episode">${globalInfo.title}</span>
+                            <button class="wncs-like-button"><span class="wncs-like-icon">👍</span> ${cmt.likes}</button>
+                            ${cmt.replies.length > 0 ? 
+                            `<label for="${uniqueId}" class="wncs-reply-button"><span class="wncs-reply-icon">💬</span> ${cmt.replies.length}</label>` : 
+                            `<button class="wncs-reply-button"><span class="wncs-reply-icon">💬</span> 0</button>`}
+                        </div>
+                    </div>
+                    ${repliesHtml}
+                </div>`;
+            });
+        
+            html += `</div></div></details>`;
+            return html;
+        }
+
+        /* =========================================
            3. Text Parsing & Processing Engine
            ========================================= */
         function parseContent(text) {
@@ -2476,6 +2779,15 @@ __ __: 글자 1단계 작게
                 rawHtmlBlocks.push(innerContent);
                 return `__RAW_HTML_BLOCK_${rawHtmlBlocks.length - 1}__`;
             });
+
+            // [NEW] [2] WNCS Blocks Extraction (WNCS{ ... })
+            // WNCS 블록을 먼저 찾아서 HTML로 변환 후 보호합니다.
+            processedText = processedText.replace(/WNCS\{[\s\S]*?\}/g, function (match) {
+                const wncsHtml = renderWNCS(match);
+                rawHtmlBlocks.push(wncsHtml);
+                return `__RAW_HTML_BLOCK_${rawHtmlBlocks.length - 1}__`;
+            });
+        
 
             const lines = processedText.trim().split('\n');
             let html = '';
@@ -2519,6 +2831,12 @@ __ __: 글자 1단계 작게
                 else if (s.startsWith('# ')) { type = 'h1'; s = s.substring(2); }
                 else if (s.startsWith('## ')) { type = 'h2'; s = s.substring(3); }
                 else if (s.startsWith('### ')) { type = 'h3'; s = s.substring(4); }
+                // ▼▼▼ [NEW] 마크다운 리스트 스타일 추가 (* 내용 -> • 내용) ▼▼▼
+                else if (s.startsWith('* ')) { 
+                    // 별표(*)와 공백을 불릿 기호(•)와 공백으로 교체
+                    s = '&bull; ' + s.substring(2); 
+                }
+                // ▲▲▲ 여기까지 추가 ▲▲▲
 
                 if (type === 'hr') { html += `<hr class="parsed-hr">`; return; }
 
@@ -2712,6 +3030,7 @@ __ __: 글자 1단계 작게
 
             const width = widthInput.value;
             const globalAlign = document.getElementById('textAlignInput').value;
+            const cssScaleVal = document.getElementById('cssScale') ? document.getElementById('cssScale').value : 1;
 
             // 1. Set Container Dimensions
             area.style.width = width + "px";
@@ -2761,10 +3080,10 @@ __ __: 글자 1단계 작게
                 `background-image: linear-gradient(${hexToRgba(bgState.overlayColor, document.getElementById('overlayAlpha').value)}, ${hexToRgba(bgState.overlayColor, document.getElementById('overlayAlpha').value)}), url('${bgState.imgData}'), ${gradLayer}; background-size: 100% 100%, ${bgState.sizeMode === 'cover' ? 'cover' : bgState.scale + '% auto'}, 100% 100%; background-position: center, ${bgState.posX}% ${bgState.posY}%, center; background-repeat: no-repeat;` :
                 `background: ${gradLayer};`;
 
-            // 6. Construct CSS Variables
-            // Note: --word-break defaults to 'break-all' based on HTML input value
-            const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --sms-bg:${colors.sms_bg}; --sms-tx:${colors.sms_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px;`;
-
+                        // 6. Construct CSS Variables
+            const wncsScaleVal = document.getElementById('wncsScale').value / 100; // 35 -> 0.35
+            
+            const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --sms-bg:${colors.sms_bg}; --sms-tx:${colors.sms_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px; --wncs-scale:${wncsScaleVal}; --css-scale:${cssScaleVal};`;
             // 눈금 HTML 생성
             const rulers = `
             <div class="ruler-guide guide-left" style="top:50%" data-label="1/2"></div>
@@ -2980,7 +3299,7 @@ __ __: 글자 1단계 작게
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_8_1.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_9_1.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -3000,16 +3319,38 @@ __ __: 글자 1단계 작게
         function mergeUp(i) { if (confirm('위 블록과 합치시겠습니까?')) { blocks[i - 1].content += "\n" + blocks[i].content; blocks.splice(i, 1); renderBlocks(); updatePreview(); saveData(); } }
         function moveBlock(i, d) { const n = i + d; if (n < 0 || n >= blocks.length) return;[blocks[n], blocks[i]] = [blocks[i], blocks[n]]; renderBlocks(); updatePreview(); saveData(); }
 
+        /* =========================================
+           이미지 너비 조절 함수
+           ========================================= */
         function updateImgWidth(i, v, source) {
             let val = parseInt(v);
-            if (val < 10) val = 10;
-            if (val > 100) val = 100;
-            blocks[i].width = val;
+        
+            // 1. 값이 없거나 숫자가 아니면(다 지웠을 때) 무시
+            if (isNaN(val)) return;
+        
+            // 2. 실제 데이터 적용용 '안전한 값' 계산 (10~100 사이로 제한)
+            // 사용자가 '5'라고 쳐도 내부적으로는 '10'으로 처리해 프리뷰가 깨지지 않게 함
+            let safeVal = val;
+            if (safeVal < 10) safeVal = 10;
+            if (safeVal > 100) safeVal = 100;
+        
+            blocks[i].width = safeVal;
+        
             const rangeEl = document.getElementById(`img-range-${i}`);
             const numEl = document.getElementById(`img-num-${i}`);
-            if (rangeEl) rangeEl.value = val;
-            if (numEl) numEl.value = val;
-            updatePreview(); saveData();
+        
+            // 3. 슬라이더는 항상 안전한 값으로 업데이트
+            if (rangeEl) rangeEl.value = safeVal;
+        
+            // 4. [핵심 수정] 텍스트 입력창 업데이트 로직 변경
+            // 슬라이더를 움직였을 때(source !== 'number')만 텍스트창을 강제로 바꿈.
+            // 직접 타이핑 중(source === 'number')일 때는 건드리지 않아서 입력을 방해하지 않음.
+            if (numEl && source !== 'number') {
+                numEl.value = safeVal;
+            }
+        
+            updatePreview();
+            saveData();
         }
 
         function toggleImgLock(i, isLocked) {
@@ -3101,7 +3442,7 @@ __ __: 글자 1단계 작게
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_8_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_9_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -3178,6 +3519,7 @@ __ __: 글자 1단계 작게
                 bgState,
                 blocks,
                 presets,
+                customCss: userCustomCss,
                 settings: {
                     width: document.getElementById('cardWidthInput').value,
                     padding: document.getElementById('paddingRange').value,
@@ -3220,7 +3562,10 @@ __ __: 글자 1단계 작게
                         if (data.bgState) bgState = data.bgState;
                         if (data.blocks) blocks = data.blocks;
                         if (data.presets) presets = data.presets; // 저장된 프리셋 목록도 복구
-
+                        if (data.customCss) {
+                                userCustomCss = data.customCss;
+                                applyCustomCss(userCustomCss);
+                            }
                         if (data.settings) {
                             document.getElementById('cardWidthInput').value = data.settings.width || 1080;
                             document.getElementById('paddingRange').value = data.settings.padding || 90;
@@ -3295,12 +3640,13 @@ __ __: 글자 1단계 작게
         }
 
 
-        // HTML Save: Generates standalone HTML with v1.8.1 headers
+        // HTML Save: Generates standalone HTML with v1.9.1 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
 
             const cssVars = `
+            --wncs-scale: ${document.getElementById('wncsScale').value / 100}; /* 추가됨 */
             --word-break: ${document.getElementById('wordBreakInput').value};
             --global-align: ${document.getElementById('textAlignInput').value};
             --base-weight: ${document.getElementById('fontWeight').value};
@@ -3337,7 +3683,7 @@ __ __: 글자 1단계 작게
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.8.1)</title>
+<title>Log Card Export (v1.9.1)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
@@ -3348,9 +3694,14 @@ __ __: 글자 1단계 작게
   
   body { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; padding: 0; background: #e2e8f0; } 
   
+  .scale-box {
+      zoom: var(--css-scale, 1);
+  }
+  
   .card-frame { 
     ${cssVars}
     ${finalBgStyle}
+    ${userCustomCss}
     color: ${colors.text};
     font-family: ${document.getElementById('fontSelect').value};
     padding: ${document.getElementById('paddingRange').value}px;
@@ -3422,6 +3773,47 @@ __ __: 글자 1단계 작게
                 document.getElementById('hexInput').value = color.hex8String.toUpperCase();
             });
         });
+
+
+        /* =========================================
+   [NEW] 사용자 CSS 관리 로직
+   ========================================= */
+let userCustomCss = ""; // 전역 변수
+
+// 1. 모달 열기/닫기
+function openCssModal() {
+    document.getElementById('cssModal').style.display = 'flex';
+    document.getElementById('pickerOverlay').style.display = 'block';
+    // 현재 값 로드
+    document.getElementById('customCssInput').value = userCustomCss;
+}
+
+function closeCssModal() {
+    document.getElementById('cssModal').style.display = 'none';
+    document.getElementById('pickerOverlay').style.display = 'none';
+    saveData(); // 닫을 때 저장
+}
+
+// 2. CSS 즉시 적용 (라이브 프리뷰)
+function applyCustomCss(cssContent) {
+    userCustomCss = cssContent;
+    
+    // 문서 헤드에 스타일 태그가 없으면 생성
+    let styleTag = document.getElementById('user-custom-style');
+    if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'user-custom-style';
+        document.head.appendChild(styleTag);
+    }
+    
+    // 내용 주입
+    styleTag.innerHTML = cssContent;
+}
+
+// [중요] 초기화 시(window.onload)에 실행될 함수에 추가 필요
+// loadData() 함수 내부 맨 끝에 아래 한 줄을 추가해야 합니다.
+// if (data.customCss) { applyCustomCss(data.customCss); }
+        
 
         function openPicker(targetKey, title) {
             currentPickerTarget = targetKey;
@@ -4096,6 +4488,52 @@ __ __: 글자 1단계 작게
                     prompt("⚠️ 자동 복사가 차단되었습니다. 아래 코드를 전체 복사(Ctrl+A, C)하세요:", html);
                 });
         }
+
+        // =========================================
+        // [NEW] 클립보드 이미지 붙여넣기 기능
+        // =========================================
+        window.addEventListener('paste', function(e) {
+            // 1. 클립보드 데이터 가져오기
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            let blob = null;
+        
+            // 2. 이미지 파일이 있는지 탐색
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    blob = items[i].getAsFile();
+                    break;
+                }
+            }
+        
+            // 3. 이미지가 발견되면 블록으로 추가
+            if (blob !== null) {
+                // 텍스트 입력창 등에 붙여넣기 되는 기본 동작 막기
+                e.preventDefault(); 
+        
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    // 기존 addImgBlock 로직을 활용해서 블록 추가
+                    blocks.push({
+                        type: 'image',
+                        content: event.target.result, // Base64 데이터
+                        width: 100
+                    });
+                    renderBlocks();
+                    updatePreview();
+                    saveData();
+                    
+                    // 화면 스크롤을 맨 아래로 이동
+                    setTimeout(() => {
+                        const blockList = document.getElementById('block-list');
+                        if(blockList) blockList.lastElementChild.scrollIntoView({behavior: "smooth"});
+                    }, 100);
+                    
+                    // 알림 (선택 사항)
+                    console.log("클립보드 이미지가 추가되었습니다!"); 
+                };
+                reader.readAsDataURL(blob);
+            }
+        });
 
     </script>
 </body>
