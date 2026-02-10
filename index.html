@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.9.1</title>
+    <title>로그 카드 생성기 v1.9.2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1568,7 +1568,7 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.9.1</div>
+            <div class="editor-title">로그 카드 생성기 v1.9.2</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
@@ -2084,7 +2084,7 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.9.1
+                © RenaMerdis v1.9.2
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
@@ -2130,6 +2130,7 @@
             <button class="btn-regex-preset" onclick="addRegexRule('lightboard')">🤖 라이트보드 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('wncs')">⚙️ WNCS 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('nai')">🖼️ NAI 태그({{..}}) 제거</button>
+            <button class="btn-regex-preset" style="color:#059669; border-color:#059669; background:#ecfdf5;" onclick="injectScaleBoxSmart()">📏 scale-box 적용(🧩 커스텀/CSS 배율 조정용)</button>
             <button class="btn-regex-preset" onclick="addRegexRule('response')">📝 '# 응답' 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('says nothing')">🙊 '*says nothing*' 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('annotation')">✏️ 주석 제거</button>
@@ -2140,7 +2141,7 @@
         <div style="margin-top:10px; padding:10px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; font-size:12px; color:#0369a1; line-height:1.4;">
             <b>📢 배율 조절 팁:</b><br>
             '바꿀 내용(OUT)'을 작성해서 HTML을 적용할 때, 가장 바깥쪽 태그(div 등)의 class에 <code>scale-box</code>를 추가해보세요.<br>
-            메인 화면의 <b>[커스텀/CSS 배율]</b> 슬라이더로 크기를 자유롭게 조절할 수 있습니다!<br>
+            스타일 설정 > 배경&폰트에서 <b>[커스텀/CSS 배율]</b> 슬라이더로 크기를 자유롭게 조절할 수 있습니다!<br>
             <div style="margin-top:4px; font-family:monospace; background:rgba(255,255,255,0.5); padding:4px; border-radius:4px;">
                 예시: &lt;div class="my-status <b>scale-box</b>"&gt;...&lt;/div&gt;
             </div>
@@ -2171,7 +2172,7 @@
     
     <span style="background:#fffbeb; color:#b45309; padding:2px 6px; border-radius:4px; font-weight:bold;">💡 꿀팁</span>
     CSS를 적용하려는 HTML의 가장 바깥쪽 태그 클래스에 <code>scale-box</code>를 한 칸 띄우고 적어주세요.<br>
-    그러면 <b>'커스텀/CSS 배율'</b> 슬라이더가 작동됩니다.<br>
+    그러면 스타일 설정 > 배경&폰트에서 <b>'커스텀/CSS 배율'</b> 슬라이더가 작동됩니다.<br>
     <span style="color:#059669; font-family:monospace;">예시: &lt;div class="status-card scale-box"&gt;</span>
 </div>
 
@@ -2207,6 +2208,7 @@
         <label class="check-box-item"><input type="checkbox" id="chk-annotation" checked> ✏️ 주석 제거</label>
         <label class="check-box-item"><input type="checkbox" id="chk-details" checked> 📂 Details 태그 제거</label>
         <label class="check-box-item"><input type="checkbox" id="chk-empty" checked> 🧹 공백 줄 제거</label>
+        <label class="check-box-item" style="color:#0369a1; background:#f0f9ff; border-color:#bae6fd;"><input type="checkbox" id="chk-scalebox" checked> 📏 scale-box 자동 적용(🧩 커스텀/CSS 배율 조정용)</label>
     </div>
 
     <div style="display:flex; gap:8px; margin-top:10px;">
@@ -2246,7 +2248,7 @@
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_9_1_data'; // Updated for v1.9.1 compatibility
+        const STORAGE_KEY = 'LogCardv1_9_2_data'; // Updated for v1.9.2 compatibility
 
         // Default Color Palette
         let colors = {
@@ -2406,10 +2408,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.9.1)
+        // Default Block Content (v1.9.2)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.9.1
+# 로그 카드 생성기 v1.9.2
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2617,7 +2619,7 @@ __ __: 글자 1단계 작게
                     document.getElementById('wncsScale').value = data.settings.wncsScale || 35; // 추가
                     document.getElementById('input-wncsScale').value = data.settings.wncsScale || 35; // 추가
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.9.1)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.9.2)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -2841,6 +2843,9 @@ __ __: 글자 1단계 작게
                 if (type === 'hr') { html += `<hr class="parsed-hr">`; return; }
 
                 // 5. Inline Styling Parsing
+                // ▼▼▼ [추가된 코드] 스마트 작은따옴표(‘, ’)를 일반 작은따옴표(')로 일괄 치환 ▼▼▼
+                s = s.replace(/[‘’]/g, "'");
+                // ▲▲▲ 여기까지 ▲▲▲                
                 s = s.replace(/`([^`]+)`/g, '__SMS_S__$1__SMS_E__'); // sms-box
                 s = s.replace(/\*\*(.*?)\*\*/g, '__BD_S__$1__BD_E__'); // Bold
                 s = s.replace(/\*(.*?)\*/g, '__IT_S__$1__IT_E__');     // Italic
@@ -3299,7 +3304,7 @@ __ __: 글자 1단계 작게
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_9_1.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_9_2.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -3442,7 +3447,7 @@ __ __: 글자 1단계 작게
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_9_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_9_2_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -3640,7 +3645,7 @@ __ __: 글자 1단계 작게
         }
 
 
-        // HTML Save: Generates standalone HTML with v1.9.1 headers
+        // HTML Save: Generates standalone HTML with v1.9.2 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
@@ -3683,7 +3688,7 @@ __ __: 글자 1단계 작게
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.9.1)</title>
+<title>Log Card Export (v1.9.2)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
@@ -4290,6 +4295,20 @@ function applyCustomCss(cssContent) {
                 if (document.getElementById('chk-empty').checked) {
                     content = content.replace(/^\s*[\r\n]/gm, '');
                 }
+
+                // =========================================
+                // [추가된 부분] 9. 📏 scale-box 자동 적용
+                // =========================================
+                if (document.getElementById('chk-scalebox').checked) {
+                    // <div class="..."> 패턴을 찾아 scale-box가 없으면 뒤에 붙여줍니다.
+                    content = content.replace(/(<div\s+[^>]*class=["'])([^"']*)(["'])/g, function(match, prefix, classNames, suffix) {
+                        // 이미 있으면 건너뜀
+                        if (classNames.includes('scale-box')) return match;
+                        // 기존 클래스 뒤에 한 칸 띄우고 scale-box 추가
+                        return prefix + classNames + ' scale-box' + suffix;
+                    });
+                }
+                // =========================================
         
                 // --- 블록 추가 및 저장 ---
                 blocks.push({
@@ -4488,6 +4507,56 @@ function applyCustomCss(cssContent) {
                     prompt("⚠️ 자동 복사가 차단되었습니다. 아래 코드를 전체 복사(Ctrl+A, C)하세요:", html);
                 });
         }
+      
+        /* =========================================
+           [수정됨] Scale-Box 스마트 주입 함수 (전체 적용 버전)
+           ========================================= */
+        function injectScaleBoxSmart() {
+            if (!confirm("텍스트 블록 내의 모든 HTML 카드(div)에 'scale-box' 클래스를 추가하시겠습니까?\n\n(한 블록에 여러 카드가 있어도 모두 적용됩니다)")) return;
+        
+            let count = 0;
+            
+            blocks.forEach((b, i) => {
+                // 텍스트 블록이 아니면 패스
+                if (b.type !== 'text') return;
+        
+                let c = b.content;
+                let original = c;
+        
+                // [핵심 변경] 정규식에 'g' 플래그 추가 + 콜백 함수 사용
+                // 1. <div class="..."> 패턴을 찾되, 태그 이름이 div인 것만 타겟팅 (article 등 내부 태그 제외)
+                // 2. 여러 번 등장해도 모두 찾음 (g 플래그)
+                // 3. 이미 scale-box가 있으면 건너뜀
+                c = c.replace(/(<div\s+[^>]*class=["'])([^"']*)(["'])/g, function(match, prefix, classNames, suffix) {
+                    // 이미 클래스명에 scale-box가 포함되어 있다면 변경 없이 그대로 반환
+                    if (classNames.includes('scale-box')) return match;
+                    
+                    // 없다면 추가해서 반환
+                    return prefix + classNames + ' scale-box' + suffix;
+                });
+        
+                // 변경사항이 있으면 적용
+                if (c !== original) {
+                    blocks[i].content = c;
+                    const ed = document.getElementById('editor-' + i);
+                    if (ed) ed.value = c; // 에디터 화면 갱신
+                    
+                    // 몇 개의 태그가 바뀌었는지 대략적으로 계산 (문자열 길이 차이 이용)
+                    count += (c.length - original.length) / 10; // ' scale-box' 길이는 10
+                }
+            });
+        
+            if (count > 0) {
+                renderBlocks();
+                updatePreview();
+                saveData();
+                closeRegexModal(); 
+                alert(`✅ 적용 완료!\n[커스텀/CSS 배율] 슬라이더가 모든 카드에 작동합니다.`);
+            } else {
+                alert("⚠️ 변경할 내용이 없거나, 이미 적용되어 있습니다.");
+            }
+        }
+      
 
         // =========================================
         // [NEW] 클립보드 이미지 붙여넣기 기능
