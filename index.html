@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.9.2</title>
+    <title>로그 카드 생성기 v1.9.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1568,7 +1568,7 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.9.2</div>
+            <div class="editor-title">로그 카드 생성기 v1.9.3</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
@@ -2084,7 +2084,7 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.9.2
+                © RenaMerdis v1.9.3
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
@@ -2130,7 +2130,14 @@
             <button class="btn-regex-preset" onclick="addRegexRule('lightboard')">🤖 라이트보드 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('wncs')">⚙️ WNCS 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('nai')">🖼️ NAI 태그({{..}}) 제거</button>
-            <button class="btn-regex-preset" style="color:#059669; border-color:#059669; background:#ecfdf5;" onclick="injectScaleBoxSmart()">📏 scale-box 적용(🧩 커스텀/CSS 배율 조정용)</button>
+<div style="display:flex; gap:6px; width:100%;">
+    <button class="btn-regex-preset" style="flex:1; justify-content:center; color:#059669; border-color:#059669; background:#ecfdf5;" onclick="injectScaleBoxAll()">
+        📏 Scale-box 전체 주입 (All)
+    </button>
+    <button class="btn-regex-preset" style="flex:1; justify-content:center; color:#b91c1c; border-color:#fca5a5; background:#fef2f2;" onclick="injectScaleBoxExclude()">
+        🚫 상태창 제외 주입 (Scale-box 부분 적용)
+    </button>
+</div>
             <button class="btn-regex-preset" onclick="addRegexRule('response')">📝 '# 응답' 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('says nothing')">🙊 '*says nothing*' 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('annotation')">✏️ 주석 제거</button>
@@ -2248,7 +2255,7 @@
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_9_2_data'; // Updated for v1.9.2 compatibility
+        const STORAGE_KEY = 'LogCardv1_9_3_data'; // Updated for v1.9.3 compatibility
 
         // Default Color Palette
         let colors = {
@@ -2408,10 +2415,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.9.2)
+        // Default Block Content (v1.9.3)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.9.2
+# 로그 카드 생성기 v1.9.3
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2619,7 +2626,7 @@ __ __: 글자 1단계 작게
                     document.getElementById('wncsScale').value = data.settings.wncsScale || 35; // 추가
                     document.getElementById('input-wncsScale').value = data.settings.wncsScale || 35; // 추가
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.9.2)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.9.3)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -3304,7 +3311,7 @@ __ __: 글자 1단계 작게
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_9_2.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_9_3.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -3447,7 +3454,7 @@ __ __: 글자 1단계 작게
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_9_2_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_9_3_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -3645,7 +3652,7 @@ __ __: 글자 1단계 작게
         }
 
 
-        // HTML Save: Generates standalone HTML with v1.9.2 headers
+        // HTML Save: Generates standalone HTML with v1.9.3 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
@@ -3688,7 +3695,7 @@ __ __: 글자 1단계 작게
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.9.2)</title>
+<title>Log Card Export (v1.9.3)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
@@ -4508,54 +4515,90 @@ function applyCustomCss(cssContent) {
                 });
         }
       
-        /* =========================================
-           [수정됨] Scale-Box 스마트 주입 함수 (전체 적용 버전)
-           ========================================= */
-        function injectScaleBoxSmart() {
-            if (!confirm("텍스트 블록 내의 모든 HTML 카드(div)에 'scale-box' 클래스를 추가하시겠습니까?\n\n(한 블록에 여러 카드가 있어도 모두 적용됩니다)")) return;
-        
-            let count = 0;
-            
-            blocks.forEach((b, i) => {
-                // 텍스트 블록이 아니면 패스
-                if (b.type !== 'text') return;
-        
-                let c = b.content;
-                let original = c;
-        
-                // [핵심 변경] 정규식에 'g' 플래그 추가 + 콜백 함수 사용
-                // 1. <div class="..."> 패턴을 찾되, 태그 이름이 div인 것만 타겟팅 (article 등 내부 태그 제외)
-                // 2. 여러 번 등장해도 모두 찾음 (g 플래그)
-                // 3. 이미 scale-box가 있으면 건너뜀
-                c = c.replace(/(<div\s+[^>]*class=["'])([^"']*)(["'])/g, function(match, prefix, classNames, suffix) {
-                    // 이미 클래스명에 scale-box가 포함되어 있다면 변경 없이 그대로 반환
-                    if (classNames.includes('scale-box')) return match;
-                    
-                    // 없다면 추가해서 반환
-                    return prefix + classNames + ' scale-box' + suffix;
-                });
-        
-                // 변경사항이 있으면 적용
-                if (c !== original) {
-                    blocks[i].content = c;
-                    const ed = document.getElementById('editor-' + i);
-                    if (ed) ed.value = c; // 에디터 화면 갱신
-                    
-                    // 몇 개의 태그가 바뀌었는지 대략적으로 계산 (문자열 길이 차이 이용)
-                    count += (c.length - original.length) / 10; // ' scale-box' 길이는 10
-                }
-            });
-        
-            if (count > 0) {
-                renderBlocks();
-                updatePreview();
-                saveData();
-                closeRegexModal(); 
-                alert(`✅ 적용 완료!\n[커스텀/CSS 배율] 슬라이더가 모든 카드에 작동합니다.`);
-            } else {
-                alert("⚠️ 변경할 내용이 없거나, 이미 적용되어 있습니다.");
-            }
+/* =========================================
+   [1] 전체 주입 함수 (모든 div에 적용)
+   ========================================= */
+function injectScaleBoxAll() {
+    if (!confirm("모든 HTML 카드(div)에 'scale-box'를 적용하시겠습니까?\n(상태창, 채팅창 구분 없이 모두 커집니다)")) return;
+
+    let count = 0;
+    blocks.forEach((b, i) => {
+        if (b.type !== 'text') return;
+        let c = b.content;
+        let original = c;
+
+        c = c.replace(/(<div\s+[^>]*class=["'])([^"']*)(["'])/g, (match, pre, cls, suf) => {
+            if (cls.includes('scale-box')) return match; // 이미 있으면 패스
+            return pre + cls + ' scale-box' + suf;
+        });
+
+        if (c !== original) {
+            blocks[i].content = c;
+            const ed = document.getElementById('editor-' + i);
+            if (ed) ed.value = c;
+            count++;
         }
+    });
+
+    finishInject(count, "모든 카드에 적용되었습니다.");
+}
+
+/* =========================================
+   [2] 상태창 제외 주입 함수 (키워드 감지)
+   ========================================= */
+function injectScaleBoxExclude() {
+    // 1. 사용자에게 제외할 키워드 입력받기
+    const keyword = prompt("Scale-box를 넣지 않을 부분(마크다운 상태창 등)으로 인식할 '핵심 단어'나 '아이콘'을 입력해주세요.\n(이 단어가 포함된 카드는 배율 조절에서 제외됩니다)", "[🎥]");
+    
+    if (!keyword) return; // 취소하면 종료
+
+    let count = 0;
+    let excludedCount = 0;
+
+    blocks.forEach((b, i) => {
+        if (b.type !== 'text') return;
+        let c = b.content;
+        let original = c;
+
+        c = c.replace(/(<div\s+[^>]*class=["'])([^"']*)(["'])/g, (match, pre, cls, suf, offset, fullStr) => {
+            if (cls.includes('scale-box')) return match;
+
+            // 2. 태그 뒤쪽 내용 미리보기 (약 500자)
+            const lookAhead = fullStr.substring(offset, offset + 500);
+
+            // 3. 사용자가 입력한 키워드가 있는지 확인
+            if (lookAhead.includes(keyword)) {
+                excludedCount++;
+                return match; // 키워드가 있으면 변경 안 함 (상태창)
+            }
+
+            // 4. 키워드가 없으면 scale-box 추가 (채팅창)
+            return pre + cls + ' scale-box' + suf;
+        });
+
+        if (c !== original) {
+            blocks[i].content = c;
+            const ed = document.getElementById('editor-' + i);
+            if (ed) ed.value = c;
+            count++;
+        }
+    });
+
+    finishInject(count, `적용 완료!\n- 적용된 채팅창: ${count}개\n- 제외된 상태창('${keyword}'): ${excludedCount}개`);
+}
+
+/* 공통 마무리 함수 */
+function finishInject(count, msg) {
+    if (count > 0) {
+        renderBlocks();
+        updatePreview();
+        saveData();
+        closeRegexModal();
+        alert(`✅ ${msg}`);
+    } else {
+        alert("⚠️ 변경할 내용이 없거나, 이미 적용되어 있습니다.");
+    }
+}
       
 
         // =========================================
