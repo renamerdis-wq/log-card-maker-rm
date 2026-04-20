@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.9.3</title>
+    <title>로그 카드 생성기 v1.9.4</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1546,14 +1546,14 @@
 <body>
 
     <div class="zoom-wrapper" id="zoomWrapper">
-        <div class="zoom-trigger" onclick="toggleZoomMenu(event)">🔍</div>
+        <div class="zoom-trigger" onclick="toggleZoomMenu(event)" role="button" tabindex="0" aria-label="확대/축소 메뉴 열기">🔍</div>
         <div class="zoom-menu" id="zoomMenu">
-            <button class="btn-sm" onclick="setZoom('in')">➕</button>
-            <input type="range" id="zoomRange" min="10" max="200" value="100" oninput="manualZoom(this.value)">
-            <button class="btn-sm" onclick="setZoom('out')">➖</button>
+            <button class="btn-sm" onclick="setZoom('in')" aria-label="확대">➕</button>
+            <input type="range" id="zoomRange" min="10" max="200" value="100" oninput="manualZoom(this.value)" aria-label="확대 배율">
+            <button class="btn-sm" onclick="setZoom('out')" aria-label="축소">➖</button>
             <span id="zoomLabel" class="zoom-label" style="font-size:10px; font-weight:800;">Auto</span>
             <button class="btn-sm" style="font-size: 10px; margin-top:5px; padding: 4px;"
-                onclick="setZoom('auto')">FIT</button>
+                onclick="setZoom('auto')" aria-label="화면 맞춤">FIT</button>
         </div>
     </div>
 
@@ -1568,13 +1568,14 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.9.3</div>
+            <div class="editor-title">로그 카드 생성기 v1.9.4</div>
             <div class="header-btn-group">
-                <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
+                <!-- [TOBE Phase 4] N5 — 이모지/짧은 라벨만 있는 버튼에 aria-label 보완 -->
+                <button class="btn-reset" onclick="resetAll(event)" title="초기화" aria-label="전체 초기화">🔄</button>
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
-                    onclick="exportProject()" title="프로젝트 저장 (JSON)">📤 내보내기</button>
+                    onclick="exportProject()" title="프로젝트 저장 (JSON)" aria-label="프로젝트 내보내기 (JSON)">📤 내보내기</button>
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;"
-                    onclick="document.getElementById('projectFileInput').click()" title="프로젝트 불러오기 (JSON)">📥
+                    onclick="document.getElementById('projectFileInput').click()" title="프로젝트 불러오기 (JSON)" aria-label="프로젝트 불러오기 (JSON)">📥
                     불러오기</button>
 
                 <input type="file" id="projectFileInput" accept=".json" onchange="loadProject(this)"
@@ -1583,36 +1584,56 @@
                 <button class="btn-reset"
                     style="background:#fae8ff; color:#86198f; border-color:#f0abfc; font-weight:bold;"
                     onclick="document.getElementById('autoLogInput').click()"
-                    title="txt 파일을 선택하면 원하는 필터를 적용해 불러옵니다.">📄 TXT 가져오기</button>
+                    title="txt 파일을 선택하면 원하는 필터를 적용해 불러옵니다."
+                    aria-label="TXT 파일 가져오기">📄 TXT 가져오기</button>
 
                 <input type="file" id="autoLogInput" accept=".txt" onchange="openTxtImportModal(this)"
                     style="display: none;">
 
+                <button class="btn-reset"
+                    style="background:#dcfce7; color:#166534; border-color:#86efac; font-weight:bold;"
+                    onclick="document.getElementById('txtToJsonInput').click()"
+                    title="TXT 파일을 RisuAI 채팅 JSON으로 변환합니다. (--- 로 메시지 분리, 서버 전송 없음)"
+                    aria-label="TXT를 RisuAI JSON으로 변환">🔄 TXT→JSON</button>
+
+                <input type="file" id="txtToJsonInput" accept=".txt" onchange="openTxtToJsonModal(this)"
+                    style="display: none;">
+
+                <!-- [TOBE v1.9.4] JSON→TXT 역변환 -->
+                <button class="btn-reset"
+                    style="background:#ccfbf1; color:#115e59; border-color:#5eead4; font-weight:bold;"
+                    onclick="document.getElementById('jsonToTxtInput').click()"
+                    title="RisuAI 채팅 JSON을 TXT로 변환합니다. (--- 로 메시지 분리, 서버 전송 없음)"
+                    aria-label="RisuAI JSON을 TXT로 변환">🔃 JSON→TXT</button>
+
+                <input type="file" id="jsonToTxtInput" accept=".json" onchange="openJsonToTxtModal(this)"
+                    style="display: none;">
+
                 <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;"
-                    onclick="openRegexModal(-1)" title="정규식">®️정규식</button>
+                    onclick="openRegexModal(-1)" title="정규식" aria-label="정규식 규칙 관리">®️정규식</button>
                 <button class="btn-reset" style="background:#e0e7ff; color:#4338ca; border-color:#c7d2fe;"
-                    onclick="openCssModal()" title="사용자 CSS 추가">✨CSS</button>
+                    onclick="openCssModal()" title="사용자 CSS 추가" aria-label="사용자 CSS 추가">✨CSS</button>
                 <button class="btn-reset" style="background:#fffbeb; color:#b45309; border-color:#fcd34d;"
-                    onclick="openBookmarkletModal()" title="케이브덕 저장 북마크릿 만들기">🔖북마크릿 생성</button>
+                    onclick="openBookmarkletModal()" title="케이브덕 / 로판AI 저장 북마크릿 만들기" aria-label="북마크릿 생성">🔖북마크릿 생성</button>
                 <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;"
-                    onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
+                    onclick="setAllVisibility(true)" title="모두 보이기" aria-label="모든 블록 보이기">👁️All</button>
                 <button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca;"
-                    onclick="setAllVisibility(false)" title="모두 숨기기">🙈All</button>
+                    onclick="setAllVisibility(false)" title="모두 숨기기" aria-label="모든 블록 숨기기">🙈All</button>
                 <button class="btn-reset" style="background:#fff7ed; color:#c2410c; border-color:#ffedd5;"
-                    onclick="splitAllBlocks()" title="나누기">✂️All</button>
-                <button class="btn-reset" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" 
-                    onclick="mergeAllBlocks()" title="합치기">🧴All</button>
+                    onclick="splitAllBlocks()" title="나누기" aria-label="모든 블록 나누기">✂️All</button>
+                <button class="btn-reset" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;"
+                    onclick="mergeAllBlocks()" title="합치기" aria-label="모든 블록 합치기">🧴All</button>
                 <button class="btn-reset" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;"
-                    onclick="deleteAllBlocks()" title="삭제">🗑️All</button>
-                <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾
+                    onclick="deleteAllBlocks()" title="삭제" aria-label="모든 블록 삭제">🗑️All</button>
+                <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()" aria-label="HTML 파일로 저장">💾
                     HTML 저장</button>
-                <button class="btn-save" style="background:#0f766e;" onclick="event.stopPropagation(); copySafeHtml()">
+                <button class="btn-save" style="background:#0f766e;" onclick="event.stopPropagation(); copySafeHtml()" aria-label="HTML 클립보드 복사">
                     📋 HTML 복사
                 </button>
                 <button class="btn-save" style="padding: 8px 10px;"
-                    onclick="event.stopPropagation(); saveImage(this, 'standard')">📷 기본 저장</button>
+                    onclick="event.stopPropagation(); saveImage(this, 'standard')" aria-label="이미지 기본 화질로 저장">📷 기본 저장</button>
                 <button class="btn-save" style="background:#334155; padding: 8px 10px;"
-                    onclick="event.stopPropagation(); saveImage(this, 'high')">✨ 고화질 저장</button>
+                    onclick="event.stopPropagation(); saveImage(this, 'high')" aria-label="이미지 고화질로 저장">✨ 고화질 저장</button>
 
             </div>
         </div>
@@ -2084,13 +2105,13 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.9.3
+                © RenaMerdis v1.9.4
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
 
             <input type="file" id="imgFileInput" accept="image/*" onchange="addImgBlock(this)">
-            <input type="file" id="bgImgFileInput" accept="image/*" onchange="handleBgUpload(this)">
+            <!-- [TOBE Phase 1-3] 중복 id="bgImgFileInput" 제거. 1708 라인이 정식 위치. -->
             <input type="file" id="insertImgFileInput" accept="image/*" onchange="handleInsertImgUpload(this)">
             <input type="file" id="presetFileInput" accept=".json" onchange="loadPresets(this)">
         </div>
@@ -2127,9 +2148,11 @@
 
         <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">⚡ 빠른 추가 (클릭 시 리스트에 추가됨)</div>
         <div class="regex-preset-box">
+            <!--
             <button class="btn-regex-preset" onclick="addRegexRule('lightboard')">🤖 라이트보드 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('wncs')">⚙️ WNCS 제거</button>
             <button class="btn-regex-preset" onclick="addRegexRule('nai')">🖼️ NAI 태그({{..}}) 제거</button>
+            -->
 <div style="display:flex; gap:6px; width:100%;">
     <button class="btn-regex-preset" style="flex:1; justify-content:center; color:#059669; border-color:#059669; background:#ecfdf5;" onclick="injectScaleBoxAll()">
         📏 Scale-box 전체 주입 (All)
@@ -2148,7 +2171,7 @@
         <div style="margin-top:10px; padding:10px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; font-size:12px; color:#0369a1; line-height:1.4;">
             <b>📢 배율 조절 팁:</b><br>
             '바꿀 내용(OUT)'을 작성해서 HTML을 적용할 때, 가장 바깥쪽 태그(div 등)의 class에 <code>scale-box</code>를 추가해보세요.<br>
-            스타일 설정 > 배경&폰트에서 <b>[커스텀/CSS 배율]</b> 슬라이더로 크기를 자유롭게 조절할 수 있습니다!<br>
+            <b>스타일 설정 > 배경&폰트</b>에서 <b>[커스텀/CSS 배율]</b> 슬라이더로 크기를 자유롭게 조절할 수 있습니다!<br>
             <div style="margin-top:4px; font-family:monospace; background:rgba(255,255,255,0.5); padding:4px; border-radius:4px;">
                 예시: &lt;div class="my-status <b>scale-box</b>"&gt;...&lt;/div&gt;
             </div>
@@ -2160,6 +2183,14 @@
         </div>
 
         <button class="btn-add-rule" onclick="addRegexRule('custom')">➕ 새 규칙 직접 추가하기</button>
+
+        <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+            <button class="btn-regex-preset" style="flex:1; justify-content:center; color:#1d4ed8; border-color:#93c5fd; background:#eff6ff;" onclick="exportRegexRules()" title="현재 규칙을 JSON 파일로 백업">📤 백업(JSON)</button>
+            <button class="btn-regex-preset" style="flex:1; justify-content:center; color:#7c3aed; border-color:#c4b5fd; background:#f5f3ff;" onclick="document.getElementById('regexImportInput').click()" title="JSON 파일에서 규칙 복구">📥 복구(JSON)</button>
+            <button class="btn-regex-preset" style="flex:1; justify-content:center; color:#b91c1c; border-color:#fca5a5; background:#fef2f2;" onclick="clearRegexRules()" title="저장된 규칙 전체 삭제">🗑️ 전체 비우기</button>
+            <input type="file" id="regexImportInput" accept=".json" style="display:none;" onchange="importRegexRules(this)">
+        </div>
+        <div id="regexSaveStatus" style="font-size:11px; color:#94a3b8; margin-top:4px; text-align:right;">💾 규칙은 브라우저에 자동 저장됩니다.</div>
 
         <div class="regex-btn-row">
             <button id="btnRegexOne" class="btn-regex-all" onclick="executeRegexQueue(false)">👇 이 블록만 적용</button>
@@ -2218,12 +2249,83 @@
         <label class="check-box-item" style="color:#0369a1; background:#f0f9ff; border-color:#bae6fd;"><input type="checkbox" id="chk-scalebox" checked> 📏 scale-box 자동 적용(🧩 커스텀/CSS 배율 조정용)</label>
     </div>
 
+    <!-- [TOBE Phase 3-1] S3 — 이어붙이기/덮어쓰기 선택 -->
+    <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px; padding:10px; border:1px solid #e2e8f0; border-radius:10px; background:#f8fafc;">
+        <div style="font-size:13px; font-weight:600; color:#334155;">불러오는 방식</div>
+        <div style="display:flex; gap:8px;">
+            <label class="check-box-item" style="flex:1;"><input type="radio" name="txtImport-mode" value="append" checked> ⊕ 이어붙이기(기본)</label>
+            <label class="check-box-item" style="flex:1;"><input type="radio" name="txtImport-mode" value="overwrite"> ↻ 덮어쓰기</label>
+        </div>
+        <div style="font-size:11px; color:#94a3b8;">덮어쓰기 선택 시 기존 블록이 모두 삭제됩니다.</div>
+    </div>
+
     <div style="display:flex; gap:8px; margin-top:10px;">
         <button class="btn-save" style="flex:1; background:#64748b;" onclick="closeTxtImportModal()">취소</button>
         <button class="btn-save" style="flex:2; background:#8b5cf6;" onclick="executeTxtImport()">📥 불러오기</button>
     </div>
 </div>
     
+
+    <div id="txtToJsonModal" style="display:none; flex-direction:column; gap:15px; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:3000; width:420px; padding:24px; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <div style="font-size:18px; font-weight:800; color:#1e293b; border-bottom:1px solid #f1f5f9; padding-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span>🔄 TXT → RisuAI JSON 변환</span>
+            <button onclick="closeTxtToJsonModal()" style="border:none; background:none; font-size:16px; cursor:pointer; color:#64748b;">✕</button>
+        </div>
+
+        <div style="font-size:13px; color:#64748b; line-height:1.5;">
+            <code>---</code> 로 구분된 메시지를 봇/유저로 번갈아 배치합니다.<br>
+            <span style="font-size:11px; color:#94a3b8;">(파일은 브라우저 내에서만 처리되며 서버로 전송되지 않습니다.)</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <label style="font-size:13px; font-weight:600; color:#334155;">첫 메시지 역할</label>
+            <div style="display:flex; gap:10px;">
+                <label class="check-box-item" style="flex:1;"><input type="radio" name="txtJson-firstRole" value="char" checked> 🤖 봇 (char)</label>
+                <label class="check-box-item" style="flex:1;"><input type="radio" name="txtJson-firstRole" value="user"> 🙂 유저</label>
+            </div>
+
+            <label style="font-size:13px; font-weight:600; color:#334155; margin-top:4px;">캐릭터 이름 (파일명용)</label>
+            <input type="text" id="txtJson-charName" placeholder="캐릭터" style="padding:8px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
+
+            <label style="font-size:13px; font-weight:600; color:#334155; margin-top:4px;">채팅방 이름 (JSON 내부)</label>
+            <input type="text" id="txtJson-chatName" placeholder="Chat 1" value="Chat 1" style="padding:8px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
+
+            <div id="txtJson-preview" style="margin-top:6px; padding:8px 10px; background:#f8fafc; border-radius:8px; font-size:12px; color:#475569; border:1px solid #e2e8f0;"></div>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:6px;">
+            <button class="btn-save" style="flex:1; background:#64748b;" onclick="closeTxtToJsonModal()">취소</button>
+            <button class="btn-save" style="flex:2; background:#16a34a;" onclick="executeTxtToJson()">💾 JSON 다운로드</button>
+        </div>
+    </div>
+
+    <!-- [TOBE v1.9.4] JSON→TXT 역변환 모달 -->
+    <div id="jsonToTxtModal" style="display:none; flex-direction:column; gap:15px; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:3000; width:420px; padding:24px; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <div style="font-size:18px; font-weight:800; color:#1e293b; border-bottom:1px solid #f1f5f9; padding-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+            <span>🔃 RisuAI JSON → TXT 변환</span>
+            <button onclick="closeJsonToTxtModal()" style="border:none; background:none; font-size:16px; cursor:pointer; color:#64748b;">✕</button>
+        </div>
+
+        <div style="font-size:13px; color:#64748b; line-height:1.5;">
+            <code>data.message[]</code> 의 본문을 <code>---</code> 구분자로 이어 붙여 TXT 로 저장합니다.<br>
+            <span style="font-size:11px; color:#94a3b8;">(파일은 브라우저 내에서만 처리되며 서버로 전송되지 않습니다.)</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="font-size:13px; color:#334155;">
+                <b>파일:</b> <span id="jsonToTxt-filename" style="color:#64748b;"></span>
+            </div>
+            <div style="font-size:13px; color:#334155;">
+                <b>채팅방 이름:</b> <span id="jsonToTxt-chatName" style="color:#64748b;"></span>
+            </div>
+            <div id="jsonToTxt-preview" style="margin-top:6px; padding:8px 10px; background:#f8fafc; border-radius:8px; font-size:12px; color:#475569; border:1px solid #e2e8f0;"></div>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:6px;">
+            <button class="btn-save" style="flex:1; background:#64748b;" onclick="closeJsonToTxtModal()">취소</button>
+            <button class="btn-save" style="flex:2; background:#0d9488;" onclick="executeJsonToTxt()">💾 TXT 다운로드</button>
+        </div>
+    </div>
 
     <div id="bookmarkletModal">
         <div style="font-size:18px; font-weight:800; color:#1e293b; margin-bottom:5px;">
@@ -2235,15 +2337,28 @@
             아래 <b>파란 버튼</b>을 마우스로 잡고<br>
             브라우저 상단 <b>[즐겨찾기 바]</b>로<br>
             <b>드래그 & 드롭</b> 해주세요!<br>
-            (케덕에서 작동 시 기본 다크 테마, 기본 폰트 색상, 글자 그림자 켜서 작동)<br>
         </div>
 
-        <div style="padding:10px;">
-            <a class="bookmarklet-pill" 
-               href='javascript:(async function(){let box=document.createElement("div");box.style.cssText="position:fixed;top:10px;left:10px;z-index:99999;background:rgba(0,0,0,0.8);color:white;padding:15px;border-radius:10px;font-size:14px;font-weight:bold;";box.innerText="🚀 줄바꿈 분리 저장 시작...";document.body.appendChild(box);let count=0;while(true){let btn=Array.from(document.querySelectorAll("button")).find(b=>b.innerText.replace(/\s/g,"").includes("더보기"));if(btn){count++;box.innerText=`👆 과거 로딩 중... (${count}회)`;btn.click();await new Promise(r=>setTimeout(r,1500));window.scrollTo(0,0);}else{break;}}box.innerText="📝 데이터 처리 중...";await new Promise(r=>setTimeout(r,500));let msgs=document.querySelectorAll("p.text-caveduck-shadow, div[class*=\"bg-background-markdown\"]");let res=[];let lastP=null;msgs.forEach(m=>{if(!m.innerText.trim())return;let curP=m.parentElement;if(lastP&&curP!==lastP)res.push("\n---\n");lastP=curP;if(m.tagName.toLowerCase()==="p"){let s=m.getAttribute("style")||"";let t=m.innerText.trim();if(s.includes("--color-user-message")||s.includes("--color-char-message")){let lines=t.split("\n");lines.forEach(l=>{if(l.trim())res.push(`"${l.trim()}"`);});}else{res.push(t);}}else{res.push("```");res.push(m.outerHTML);res.push("```");}});let blob=new Blob([res.join("\n")],{type:"text/plain"});let link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=`케이브덕_하이브리드_${new Date().toISOString().slice(0,10)}.txt`;document.body.appendChild(link);link.click();document.body.removeChild(link);box.innerText="✅ 저장 완료!";setTimeout(()=>box.remove(),4000);})();'
-               onclick="alert(&quot;클릭하는 게 아닙니다!\n버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 '드래그' 하세요.\n(케덕 대화방에 들어가서 추가한 북마크를 누르고 기다려주세요. TXT 파일이 저장됩니다.(맞춤채팅방 설정에서 색상테마 다크, 폰트색상 기본값, 글자 그림자 켜기로 설정해야합니다.)&quot;); return false;">
-                📥 케이브덕 저장기
-            </a>
+        <div style="padding:6px 10px; display:flex; flex-direction:column; gap:10px;">
+            <div>
+                <a id="bookmarklet-caveduck" class="bookmarklet-pill" href="#"
+                   onclick="alert('클릭하는 게 아닙니다!\n버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 \'드래그\' 하세요.\n\n[케이브덕 전용]\n대화방에 들어가서 추가한 북마크를 눌러주세요. TXT 파일이 저장됩니다.\n(맞춤채팅방 설정에서 색상테마 다크, 폰트색상 기본값, 글자 그림자 켜기로 설정해야 합니다.)'); return false;">
+                    📥 케이브덕 저장기 v2
+                </a>
+                <div style="font-size:11px; color:#94a3b8; margin-top:4px; padding-left:4px;">
+                    케이브덕: UI모드 소설 + 지문대사 분리(캐릭터, 내 채팅 모두 ON) + 글자 그림자 ON 설정 필요
+                </div>
+            </div>
+
+            <div>
+                <a id="bookmarklet-rofan" class="bookmarklet-pill" href="#"
+                   onclick="alert('클릭하는 게 아닙니다!\n버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 \'드래그\' 하세요.\n\n[로판AI 전용]\n대화방에 들어가서 추가한 북마크를 눌러주세요. 위/아래로 자동 스크롤하며 메시지를 수집한 뒤 TXT 파일로 저장합니다.'); return false;">
+                    📥 로판AI 저장기 v2
+                </a>
+                <div style="font-size:11px; color:#94a3b8; margin-top:4px; padding-left:4px;">
+                    로판AI: 설정 > 추가설정 초기화
+                </div>
+            </div>
         </div>
 
         <button class="btn-save" style="background:#64748b; margin-top:10px;"
@@ -2255,7 +2370,15 @@
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_9_3_data'; // Updated for v1.9.3 compatibility
+        const STORAGE_KEY = 'LogCardv1_9_3_data'; // v1.9.4 는 v1.9.3 데이터와 호환 (feature add only)
+
+        // [TOBE Phase 4] N4 — 흩어진 매직 넘버 상수화
+        const PREVIEW_DEBOUNCE_MS = 800;       // 타이핑 중 프리뷰 재렌더 디바운스 (Phase 3-3)
+        const BG_IMAGE_LIMIT_BYTES = 2 * 1024 * 1024;  // 배경 이미지 업로드 상한 (Phase 2-4)
+        const REGEX_BIG_BLOCK_BYTES = 50 * 1024;       // 정규식 실행 경고 임계치 (Phase 2-5)
+        const SOURCE_PREVIEW_CHARS = 200;              // 소스 뷰 말줄임 기준
+        const WNCS_FIELD_LIMIT = 100;                  // WNCS 헤더 필드 길이 상한 (Phase 4 N2)
+        const WNCS_AUTHOR_NOTE_LIMIT = 2000;           // WNCS 작가의 말 길이 상한 (Phase 4 N2)
 
         // Default Color Palette
         let colors = {
@@ -2415,10 +2538,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.9.3)
+        // Default Block Content (v1.9.4)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.9.3
+# 로그 카드 생성기 v1.9.4
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2432,7 +2555,7 @@
 *별표 하나는 이탤릭 효과,*
 **별표 두 개는 굵게 강조해요.**
 일반 텍스트는 나레이션으로 들어갑니다.
-____ *💌Tip : 케덕이나 로판은 🌠 버튼으로 별표를 지우거나, 디테일 설정에서 별표 강조 효과를 끄면 일반 나레이션으로 넣을 수 있어요.*
+____ *💌Tip : 🌠 버튼으로 별표를 지우거나, 디테일 설정에서 별표 강조 효과를 끌 수 있어요.*
 ---
 '스타일 설정'을 통해서 전체 텍스트를 좌측, 가운데, 우측, 양쪽 정렬할 수 있습니다.
 만약 **딱 한줄만** 정렬하거나 폰트 크기를 조절하고 싶다면 문장 앞에 **약속된 기호**를 넣어주세요.
@@ -2473,7 +2596,9 @@ __ __: 글자 1단계 작게
 
 
         window.onload = function () {
+            probeLocalStorage(); // [TOBE Phase 2-4] S2 — 저장 가능 여부 선제 체크
             loadData();
+            loadRegexRules();
             initPresets();
             renderBlocks();
             updateUI();
@@ -2595,7 +2720,46 @@ __ __: 글자 1단계 작게
                     noItalic: document.getElementById('noItalic').checked
                 }
             };
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { console.error("Save failed", e); }
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+            catch (e) {
+                console.error("Save failed", e);
+                // [TOBE Phase 2-4] S2 — Quota 초과 전용 분기
+                if (e && (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014)) {
+                    showQuotaBanner('저장소 용량을 초과해 자동 저장이 실패했습니다.');
+                    if (!window.__quotaAlertShown) {
+                        window.__quotaAlertShown = true;
+                        alert('⚠️ 브라우저 저장소(localStorage) 용량을 초과했습니다.\n' +
+                              '작업 내용이 더 이상 자동 저장되지 않습니다.\n' +
+                              '상단 경고 배너를 확인하고 프로젝트 JSON으로 즉시 백업하세요.');
+                    }
+                }
+            }
+        }
+
+        // [TOBE Phase 2-4] S2 — 닫을 수 없는 상단 경고 배너 (idempotent)
+        function showQuotaBanner(msg) {
+            if (document.getElementById('__quotaBanner__')) return;
+            const bar = document.createElement('div');
+            bar.id = '__quotaBanner__';
+            bar.setAttribute('role', 'alert');
+            bar.style.cssText =
+                'position:fixed;top:0;left:0;right:0;z-index:99999;' +
+                'background:#dc2626;color:#fff;padding:10px 16px;' +
+                'text-align:center;font-weight:700;font-size:14px;' +
+                'box-shadow:0 2px 8px rgba(0,0,0,0.3);letter-spacing:0.02em;';
+            bar.textContent = '⚠️ ' + (msg || '저장소 용량이 가득 찼습니다. 프로젝트 JSON으로 백업하세요.');
+            if (document.body) document.body.appendChild(bar);
+            else document.addEventListener('DOMContentLoaded', () => document.body.appendChild(bar));
+        }
+
+        // [TOBE Phase 2-4] S2 — 로드 시점 1바이트 probe. 실패 시 즉시 배너.
+        function probeLocalStorage() {
+            try {
+                localStorage.setItem('__qtest__', '1');
+                localStorage.removeItem('__qtest__');
+            } catch (e) {
+                showQuotaBanner('저장소에 쓸 수 없습니다. (용량 초과 또는 프라이빗 모드)');
+            }
         }
 
         function loadData() {
@@ -2626,7 +2790,7 @@ __ __: 글자 1단계 작게
                     document.getElementById('wncsScale').value = data.settings.wncsScale || 35; // 추가
                     document.getElementById('input-wncsScale').value = data.settings.wncsScale || 35; // 추가
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.9.3)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.9.3+)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -2703,11 +2867,13 @@ __ __: 글자 1단계 작게
                     let info = line.substring(3);
                     let splitIdx = info.indexOf('-');
                     if (splitIdx !== -1) {
-                        globalInfo.count = info.substring(0, splitIdx).trim();
-                        globalInfo.title = info.substring(splitIdx + 1).trim();
-                    } else { globalInfo.count = info; }
-                } 
-                else if (line.startsWith('AN:')) { authorNote = line.substring(3).trim(); } 
+                        // [TOBE Phase 4] N2 — globalInfo 필드는 헤더 영역이라 100자 초과 시 레이아웃 파괴
+                        globalInfo.count = info.substring(0, splitIdx).trim().substring(0, WNCS_FIELD_LIMIT);
+                        globalInfo.title = info.substring(splitIdx + 1).trim().substring(0, WNCS_FIELD_LIMIT);
+                    } else { globalInfo.count = info.trim().substring(0, WNCS_FIELD_LIMIT); }
+                }
+                // [TOBE Phase 4] N2 — authorNote 는 본문이라 다소 길이 여유. 별도 상한.
+                else if (line.startsWith('AN:')) { authorNote = line.substring(3).trim().substring(0, WNCS_AUTHOR_NOTE_LIMIT); }
                 else if (line.startsWith('R:|')) {
                     if (currentMainComment) {
                         let parts = line.split('|');
@@ -2715,7 +2881,7 @@ __ __: 글자 1단계 작게
                             currentMainComment.replies.push({ nick: parts[1], content: parts.slice(2).join('|') });
                         }
                     }
-                } 
+                }
                 else if (line.includes('|')) {
                     let parts = line.split('|');
                     if (parts.length >= 5) {
@@ -2730,18 +2896,19 @@ __ __: 글자 1단계 작게
             });
         
             // 3. HTML 조립 (문자열 반환)
+            // [TOBE Phase 1-1] 사용자 입력 9개 필드 모두 escapeHtml 처리. XSS 차단.
             let html = `
             <details class="wncs-details" open>
-                <summary class="wncs-summary"><span>댓글 모음</span><span class="wncs-summary-ep">${globalInfo.title}</span></summary>
+                <summary class="wncs-summary"><span>댓글 모음</span><span class="wncs-summary-ep">${escapeHtml(globalInfo.title)}</span></summary>
                 <div class="wncs-container">
-                    ${authorNote ? `<div class="wncs-author-note"><div class="wncs-author-title">작가의 말</div><div class="wncs-author-content">${authorNote}</div></div>` : ''}
-                    <div class="wncs-header"><h2>${globalInfo.count}</h2><div class="wncs-header-filters"><span class="wncs-filter-active">추천순</span><span>최신순</span></div></div>
+                    ${authorNote ? `<div class="wncs-author-note"><div class="wncs-author-title">작가의 말</div><div class="wncs-author-content">${escapeHtml(authorNote)}</div></div>` : ''}
+                    <div class="wncs-header"><h2>${escapeHtml(globalInfo.count)}</h2><div class="wncs-header-filters"><span class="wncs-filter-active">추천순</span><span>최신순</span></div></div>
                     <div class="wncs-comment-list">`;
-        
+
             comments.forEach((cmt, idx) => {
-                const uniqueId = `reply-toggle-${Date.now()}-${idx}`; // 고유 ID 생성
+                const uniqueId = `reply-toggle-${Date.now()}-${idx}`; // 고유 ID 생성 (내부 생성값, 이스케이프 불필요)
                 const bestBadge = cmt.isBest ? `<span class="wncs-best-badge">BEST</span>` : '';
-                
+
                 let repliesHtml = '';
                 if (cmt.replies.length > 0) {
                     repliesHtml = `
@@ -2749,22 +2916,22 @@ __ __: 글자 1단계 작게
                     <div class="wncs-replies-container"><div class="wncs-replies-elevated">
                         ${cmt.replies.map(r => `
                         <div class="wncs-reply-comment">
-                            <div class="wncs-comment-meta"><span class="wncs-nickname">${r.nick}</span><button class="wncs-options-button">⋮</button></div>
-                            <div class="wncs-comment-content">${r.content}</div>
+                            <div class="wncs-comment-meta"><span class="wncs-nickname">${escapeHtml(r.nick)}</span><button class="wncs-options-button">⋮</button></div>
+                            <div class="wncs-comment-content">${escapeHtml(r.content)}</div>
                         </div>`).join('')}
                     </div></div>`;
                 }
-        
+
                 html += `
                 <div class="wncs-comment-thread">
                     <div class="wncs-comment wncs-main-comment">
-                        <div class="wncs-comment-meta">${bestBadge}<span class="wncs-nickname">${cmt.nick}</span><span class="wncs-date">${cmt.date}</span><button class="wncs-options-button">⋮</button></div>
-                        <div class="wncs-comment-content">${cmt.content}</div>
+                        <div class="wncs-comment-meta">${bestBadge}<span class="wncs-nickname">${escapeHtml(cmt.nick)}</span><span class="wncs-date">${escapeHtml(cmt.date)}</span><button class="wncs-options-button">⋮</button></div>
+                        <div class="wncs-comment-content">${escapeHtml(cmt.content)}</div>
                         <div class="wncs-comment-actions">
-                            <span class="wncs-episode">${globalInfo.title}</span>
-                            <button class="wncs-like-button"><span class="wncs-like-icon">👍</span> ${cmt.likes}</button>
-                            ${cmt.replies.length > 0 ? 
-                            `<label for="${uniqueId}" class="wncs-reply-button"><span class="wncs-reply-icon">💬</span> ${cmt.replies.length}</label>` : 
+                            <span class="wncs-episode">${escapeHtml(globalInfo.title)}</span>
+                            <button class="wncs-like-button"><span class="wncs-like-icon">👍</span> ${escapeHtml(cmt.likes)}</button>
+                            ${cmt.replies.length > 0 ?
+                            `<label for="${uniqueId}" class="wncs-reply-button"><span class="wncs-reply-icon">💬</span> ${cmt.replies.length}</label>` :
                             `<button class="wncs-reply-button"><span class="wncs-reply-icon">💬</span> 0</button>`}
                         </div>
                     </div>
@@ -2869,6 +3036,9 @@ __ __: 글자 1단계 작게
 
                 // Restore HTML Tags
                 s = s.replace(/__TAG_(\d+)__/g, (_, id) => tags[id]);
+
+                // [TOBE Phase 2-1] C4 — 복원된 사용자 태그를 화이트리스트로 sanitize
+                s = sanitizeHtml(s);
 
                 // 6. Final HTML Generation
                 if (type === 'bubble-left') html += `<div class="bubble-row left"><div class="bubble left">${s}</div></div>`;
@@ -2982,17 +3152,19 @@ __ __: 글자 1단계 작게
 
                 if (b.type === 'text') {
                     // Text Block Editor UI
+                    // [TOBE Phase 4] escapeHtml 전수 스캔 — textarea 본문 주입 방어 (프로젝트 JSON 가져오기 경로로 악성 content 유입 대비)
                     inner += `<div class="input-wrapper">
-                        <textarea id="editor-${i}" class="code-editor" oninput="updateTextContent(${i}, this.value)">${b.content}</textarea>
+                        <textarea id="editor-${i}" class="code-editor" oninput="updateTextContent(${i}, this.value)">${escapeHtml(b.content)}</textarea>
                         <button class="btn-copy-floating" onclick="copyBlockContent(${i})" title="내용 복사">📋</button>
                       </div>`;
                     inner += `<div style="text-align:right;"><span class="source-label" onclick="toggleSource(${i})">💻 소스 보기</span></div>`;
-                    inner += `<textarea id="source-${i}" class="source-viewer" readonly>${parseContent(b.content)}</textarea>`;
+                    inner += `<textarea id="source-${i}" class="source-viewer" readonly>${escapeHtml(parseContent(b.content))}</textarea>`;
                 } else {
                     // Image Block UI
                     const imgW = b.width || 100;
-                    inner += `<div style="text-align:center; margin-bottom:10px;"><img src="${b.content}" class="editor-img-preview"></div>
-            
+                    // [TOBE Phase 4] escapeHtml 전수 스캔 — src 속성 이스케이프 (data:URL 이외 주입 차단)
+                    inner += `<div style="text-align:center; margin-bottom:10px;"><img src="${escapeHtml(b.content)}" class="editor-img-preview"></div>
+
             <div style="background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
                 <div style="display:flex; align-items:center; gap:8px; font-size:11px;">
                     <span style="font-weight:bold; color:#64748b; min-width:30px;">너비:</span>
@@ -3004,7 +3176,7 @@ __ __: 글자 1단계 작게
             </div>
 
             <div style="text-align:right; margin-top:5px;"><span class="source-label" onclick="toggleSource(${i})">💻 Base64</span></div>
-            <textarea id="source-${i}" class="source-viewer" readonly>${b.content.substring(0, 200)}...</textarea>`;
+            <textarea id="source-${i}" class="source-viewer" readonly>${escapeHtml(b.content.substring(0, SOURCE_PREVIEW_CHARS))}...</textarea>`;
                 }
                 div.innerHTML = inner; c.appendChild(div);
             });
@@ -3013,12 +3185,13 @@ __ __: 글자 1단계 작게
         function updateTextContent(i, val) {
             blocks[i].content = val;
             if (debounceTimer) clearTimeout(debounceTimer);
+            // [TOBE Phase 3-3] N3 — 타이핑 중 전체 프리뷰 재렌더 부담을 줄이려 300ms → 800ms
             debounceTimer = setTimeout(() => {
                 const v = document.getElementById(`source-${i}`);
                 if (v) v.value = parseContent(val);
                 updatePreview();
                 saveData();
-            }, 300);
+            }, PREVIEW_DEBOUNCE_MS);
         }
 
 
@@ -3115,7 +3288,8 @@ __ __: 글자 1단계 작게
                     return `<div class="preview-block-item" data-index="${i}" style="cursor: pointer;" title="클릭하여 수정하기">` +
                         (b.type === 'text'
                             ? `<div style="display:contents;">${parseContent(b.content)}</div>`
-                            : `<div style="text-align:center; margin:var(--para-sp) 0;"><img src="${b.content}" style="width:${b.width || 100}%; border-radius:8px;"></div>`)
+                            // [TOBE Phase 4] escapeHtml 전수 스캔 — 프리뷰 이미지 src 속성 이스케이프
+                            : `<div style="text-align:center; margin:var(--para-sp) 0;"><img src="${escapeHtml(b.content)}" style="width:${b.width || 100}%; border-radius:8px;"></div>`)
                         + `</div>`;
                 }).join('') + `</div>`;
         }
@@ -3184,7 +3358,18 @@ __ __: 글자 1단계 작게
             updatePreview(); saveData();
         }
 
-        function handleBgUpload(i) { const f = i.files[0]; if (!f) return; const r = new FileReader(); r.onload = e => { bgState.imgData = e.target.result; document.getElementById('showImgOption').checked = true; toggleImgPanel(true); setBgSize('contain'); }; r.readAsDataURL(f); }
+        function handleBgUpload(i) {
+            const f = i.files[0]; if (!f) return;
+            // [TOBE Phase 2-4] S2 — 2MB 초과 이미지는 data:URL 로 저장 시 Quota 폭발 가능성
+            if (f.size > BG_IMAGE_LIMIT_BYTES) {
+                alert('⚠️ 배경 이미지가 너무 큽니다.\n현재: ' + (f.size / 1024 / 1024).toFixed(2) + 'MB\n허용: 2MB 이하\n\n용량이 큰 이미지는 저장소 한도를 초과할 수 있어 차단됩니다.');
+                i.value = '';
+                return;
+            }
+            const r = new FileReader();
+            r.onload = e => { bgState.imgData = e.target.result; document.getElementById('showImgOption').checked = true; toggleImgPanel(true); setBgSize('contain'); };
+            r.readAsDataURL(f);
+        }
         function setOverlay(c, b) { bgState.overlayColor = c; document.querySelectorAll('.btn-overlay').forEach(el => el.classList.remove('selected')); b.classList.add('selected'); updatePreview(); saveData(); }
 
         /* --- Preset Handling --- */
@@ -3311,7 +3496,7 @@ __ __: 글자 1단계 작게
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_9_3.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_9_4.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -3454,7 +3639,7 @@ __ __: 글자 1단계 작게
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_9_3_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_9_4_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -3519,6 +3704,98 @@ __ __: 글자 1단계 작게
         }
 
         /* =========================================
+       Security Helpers (v2-TOBE: Phase 1)
+       ========================================= */
+        // HTML 특수문자 이스케이프. WNCS 등 사용자 입력을 innerHTML 로 꽂기 전 필수.
+        // 주의: `*`, `_` 등 마크다운 기호는 HTML 특수문자가 아니므로 원본 유지된다.
+        function escapeHtml(s) {
+            if (s === null || s === undefined) return '';
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // [TOBE Phase 2-1] 화이트리스트 기반 HTML sanitizer
+        // DOMParser 로 파싱 → 허용 태그/속성만 남김. 금지 태그는 unwrap (텍스트는 보존).
+        // 모든 on* 이벤트 핸들러 제거, href/src 는 안전 스킴만, style 은 위험 속성 제거.
+        const SANITIZE_ALLOWED_TAGS = new Set([
+            'B','I','U','S','EM','STRONG','SPAN','BR','P','A','IMG','SMALL','SUB','SUP',
+            'H1','H2','H3','H4','H5','H6','HR','DIV','FONT','CENTER'
+        ]);
+        const SANITIZE_GLOBAL_ATTRS = new Set(['class','title','style','id']);
+        const SANITIZE_TAG_ATTRS = {
+            'A':   new Set(['href','target','rel']),
+            'IMG': new Set(['src','alt','width','height']),
+            'FONT':new Set(['color','size','face'])
+        };
+        const SANITIZE_SAFE_URL = /^(https?:|data:image\/|\.?\/|#|mailto:)/i;
+        function sanitizeHtml(dirty) {
+            if (dirty === null || dirty === undefined) return '';
+            const str = String(dirty);
+            if (str.indexOf('<') === -1) return str; // short-circuit: no tags → no work
+            const doc = new DOMParser().parseFromString(
+                '<!DOCTYPE html><html><body>' + str + '</body></html>', 'text/html'
+            );
+            const body = doc.body;
+            (function walk(node) {
+                const children = Array.from(node.childNodes);
+                for (const child of children) {
+                    if (child.nodeType !== 1) continue; // text/comment 는 그대로 둠
+                    const tag = child.nodeName.toUpperCase();
+                    if (!SANITIZE_ALLOWED_TAGS.has(tag)) {
+                        // 금지 태그: unwrap — 자식만 보존
+                        while (child.firstChild) node.insertBefore(child.firstChild, child);
+                        node.removeChild(child);
+                        continue;
+                    }
+                    const attrs = Array.from(child.attributes);
+                    for (const attr of attrs) {
+                        const name = attr.name.toLowerCase();
+                        // on* 이벤트는 무조건 제거
+                        if (name.startsWith('on')) { child.removeAttribute(attr.name); continue; }
+                        const okGlobal = SANITIZE_GLOBAL_ATTRS.has(name);
+                        const okTag = SANITIZE_TAG_ATTRS[tag] && SANITIZE_TAG_ATTRS[tag].has(name);
+                        if (!okGlobal && !okTag) { child.removeAttribute(attr.name); continue; }
+                        if (name === 'href' || name === 'src') {
+                            const v = (attr.value || '').trim();
+                            if (!SANITIZE_SAFE_URL.test(v)) { child.removeAttribute(attr.name); continue; }
+                        }
+                        if (name === 'style') {
+                            const v = attr.value || '';
+                            if (/expression\s*\(|javascript\s*:|@import|url\s*\(\s*['"]?\s*javascript/i.test(v)) {
+                                child.removeAttribute('style');
+                            }
+                        }
+                    }
+                    walk(child);
+                }
+            })(body);
+            return body.innerHTML;
+        }
+
+        // loadProject 스키마 검증. 실패 시 {ok:false, msg:"..."} 반환.
+        function validateProject(data) {
+            if (!data || typeof data !== 'object') return { ok: false, msg: '최상위 객체 아님' };
+            if ('blocks' in data) {
+                if (!Array.isArray(data.blocks)) return { ok: false, msg: 'blocks 가 배열이 아님' };
+                for (let i = 0; i < data.blocks.length; i++) {
+                    const b = data.blocks[i];
+                    if (!b || typeof b !== 'object') return { ok: false, msg: `blocks[${i}] 이 객체 아님` };
+                    if (typeof b.type !== 'string') return { ok: false, msg: `blocks[${i}].type 문자열 아님` };
+                    if (typeof b.content !== 'string') return { ok: false, msg: `blocks[${i}].content 문자열 아님` };
+                }
+            }
+            if ('presets' in data && !Array.isArray(data.presets)) return { ok: false, msg: 'presets 가 배열 아님' };
+            if ('colors' in data && (!data.colors || typeof data.colors !== 'object')) return { ok: false, msg: 'colors 가 객체 아님' };
+            if ('bgState' in data && (!data.bgState || typeof data.bgState !== 'object')) return { ok: false, msg: 'bgState 가 객체 아님' };
+            if ('customCss' in data && typeof data.customCss !== 'string') return { ok: false, msg: 'customCss 가 문자열 아님' };
+            return { ok: true };
+        }
+
+        /* =========================================
        Project Save / Load (JSON)
        ========================================= */
 
@@ -3567,6 +3844,13 @@ __ __: 글자 1단계 작게
             reader.onload = function (e) {
                 try {
                     const data = JSON.parse(e.target.result);
+
+                    // [TOBE Phase 1-2] 스키마 검증 — 실패 시 즉시 차단
+                    const v = validateProject(data);
+                    if (!v.ok) {
+                        alert('❌ 프로젝트 파일이 올바르지 않습니다.\n사유: ' + v.msg);
+                        return;
+                    }
 
                     if (confirm("현재 작업 내용을 덮어쓰고 프로젝트를 불러오시겠습니까?")) {
                         // 데이터 복구
@@ -3652,7 +3936,7 @@ __ __: 글자 1단계 작게
         }
 
 
-        // HTML Save: Generates standalone HTML with v1.9.3 headers
+        // HTML Save: Generates standalone HTML with v1.9.4 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
@@ -3695,7 +3979,7 @@ __ __: 글자 1단계 작게
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.9.3)</title>
+<title>Log Card Export (v1.9.4)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
@@ -3873,6 +4157,100 @@ function applyCustomCss(cssContent) {
         // 정규식 규칙들을 저장할 배열 (모달을 닫아도 유지됨)
         let regexQueue = [];
         let currentRegexTarget = -1;
+        const REGEX_STORAGE_KEY = 'LogCard_regexRules_v1';
+
+        // 브라우저(localStorage) 영속화 ----
+        function saveRegexRules() {
+            try {
+                localStorage.setItem(REGEX_STORAGE_KEY, JSON.stringify(regexQueue));
+            } catch (e) {
+                console.error('regex save failed', e);
+            }
+        }
+
+        function loadRegexRules() {
+            try {
+                const raw = localStorage.getItem(REGEX_STORAGE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    regexQueue = parsed.map(r => ({
+                        pattern: typeof r.pattern === 'string' ? r.pattern : '',
+                        replace: typeof r.replace === 'string' ? r.replace : '',
+                        ignoreCase: !!r.ignoreCase,
+                        multiline: r.multiline !== false
+                    }));
+                }
+            } catch (e) {
+                console.error('regex load failed', e);
+            }
+        }
+
+        function clearRegexRules() {
+            if (regexQueue.length === 0) { alert('저장된 규칙이 없습니다.'); return; }
+            if (!confirm(`저장된 ${regexQueue.length}개의 규칙을 모두 삭제하시겠습니까?`)) return;
+            regexQueue = [];
+            saveRegexRules();
+            renderRegexList();
+        }
+
+        function exportRegexRules() {
+            if (regexQueue.length === 0) { alert('백업할 규칙이 없습니다.'); return; }
+            const payload = { type: 'LogCardRegexRules', version: 1, date: new Date().toISOString(), rules: regexQueue };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            a.download = `LogCard_regex_${ts}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function importRegexRules(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const list = Array.isArray(data) ? data : (Array.isArray(data.rules) ? data.rules : null);
+                    if (!list) { alert('올바른 규칙 백업 파일이 아닙니다.'); return; }
+
+                    const normalized = list.map(r => ({
+                        pattern: typeof r.pattern === 'string' ? r.pattern : '',
+                        replace: typeof r.replace === 'string' ? r.replace : '',
+                        ignoreCase: !!r.ignoreCase,
+                        multiline: r.multiline !== false
+                    }));
+
+                    let mode = 'replace';
+                    if (regexQueue.length > 0) {
+                        const pick = confirm(
+                            `현재 ${regexQueue.length}개의 규칙이 저장되어 있습니다.\n\n` +
+                            `[확인] 현재 규칙을 모두 지우고 ${normalized.length}개로 덮어쓰기\n` +
+                            `[취소] 현재 규칙 뒤에 이어붙이기`
+                        );
+                        mode = pick ? 'replace' : 'append';
+                    }
+
+                    if (mode === 'replace') regexQueue = normalized;
+                    else regexQueue = regexQueue.concat(normalized);
+
+                    saveRegexRules();
+                    renderRegexList();
+                    alert(`✅ ${normalized.length}개의 규칙을 불러왔습니다.`);
+                } catch (err) {
+                    alert('파일을 읽는 중 오류가 발생했습니다.');
+                    console.error(err);
+                } finally {
+                    input.value = '';
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
 
         // 1. 모달 열기
         function openRegexModal(index) {
@@ -3920,6 +4298,7 @@ function applyCustomCss(cssContent) {
             }
 
             regexQueue.push(newRule);
+            saveRegexRules();
             renderRegexList();
             setTimeout(() => {
                 const container = document.getElementById('regexListContainer');
@@ -3930,6 +4309,7 @@ function applyCustomCss(cssContent) {
         // 3. 규칙 삭제
         function removeRegexRule(idx) {
             regexQueue.splice(idx, 1);
+            saveRegexRules();
             renderRegexList();
         }
 
@@ -3937,6 +4317,7 @@ function applyCustomCss(cssContent) {
         function updateRegexRule(idx, field, value) {
             // 체크박스(boolean)와 텍스트(string) 모두 처리
             regexQueue[idx][field] = value;
+            saveRegexRules();
         }
 
         // 5. 화면 그리기 (렌더링) - Multiline 옵션 추가됨
@@ -3965,10 +4346,10 @@ function applyCustomCss(cssContent) {
                     </div>
                 </div>
                 <div class="regex-inputs-row">
-                    <input type="text" class="regex-mini-input" placeholder="찾을 패턴 (예: ^\\s*[\\r\\n])" value="${rule.pattern.replace(/"/g, '&quot;')}" oninput="updateRegexRule(${idx}, 'pattern', this.value)">
+                    <input type="text" class="regex-mini-input" placeholder="찾을 패턴 (예: ^\\s*[\\r\\n])" value="${escapeHtml(rule.pattern)}" oninput="updateRegexRule(${idx}, 'pattern', this.value)">
                 </div>
                 <div class="regex-inputs-row">
-                    <input type="text" class="regex-mini-input" placeholder="바꿀 내용 (비우면 삭제)" value="${rule.replace.replace(/"/g, '&quot;')}" oninput="updateRegexRule(${idx}, 'replace', this.value)">
+                    <input type="text" class="regex-mini-input" placeholder="바꿀 내용 (비우면 삭제)" value="${escapeHtml(rule.replace)}" oninput="updateRegexRule(${idx}, 'replace', this.value)">
                 </div>
             `;
                 container.appendChild(div);
@@ -3988,6 +4369,21 @@ function applyCustomCss(cssContent) {
                 const targetIndices = isAll ? blocks.map((_, i) => i) : (currentRegexTarget !== -1 ? [currentRegexTarget] : []);
 
                 if (targetIndices.length === 0) return;
+
+                // [TOBE Phase 2-5] C2 — 50KB 초과 블록은 ReDoS 로 브라우저 프리징 가능
+                const bigIndices = targetIndices.filter(i =>
+                    blocks[i] && blocks[i].type === 'text' &&
+                    (blocks[i].content || '').length > REGEX_BIG_BLOCK_BYTES
+                );
+                if (bigIndices.length > 0) {
+                    const sampleSize = (blocks[bigIndices[0]].content || '').length;
+                    if (!confirm(
+                        '⚠️ 대형 블록에 정규식을 실행합니다.\n\n' +
+                        '대상: ' + bigIndices.length + '개 블록 (최대 ' + (sampleSize / 1024).toFixed(1) + 'KB)\n' +
+                        '복잡한 패턴의 경우 브라우저가 수 초~수 분간 응답하지 않을 수 있습니다.\n\n' +
+                        '계속하시겠습니까?'
+                    )) return;
+                }
 
                 targetIndices.forEach(blockIdx => {
                     if (blocks[blockIdx].type !== 'text') return;
@@ -4012,7 +4408,8 @@ function applyCustomCss(cssContent) {
 
                 if (changedCount > 0) {
                     renderBlocks(); updatePreview(); saveData();
-                    regexQueue = []; renderRegexList(); closeRegexModal();
+                    // 규칙은 브라우저에 저장되어 있으므로 실행 후에도 유지한다.
+                    closeRegexModal();
                     alert(`완료! ${changedCount}개의 블록이 수정되었습니다.`);
                 } else {
                     alert("해당 패턴을 찾지 못해 변경된 내용이 없습니다.");
@@ -4317,32 +4714,365 @@ function applyCustomCss(cssContent) {
                 }
                 // =========================================
         
+                // [TOBE Phase 3-1] S3 — 이어붙이기/덮어쓰기 모드 반영
+                const modeEl = document.querySelector('input[name="txtImport-mode"]:checked');
+                const mode = modeEl ? modeEl.value : 'append';
+
+                if (mode === 'overwrite') {
+                    if (blocks.length > 0 && !confirm(`기존 블록 ${blocks.length}개를 모두 삭제하고 덮어씁니다. 계속할까요?`)) {
+                        return; // 사용자가 취소: 모달 유지
+                    }
+                    blocks = [];
+                }
+
                 // --- 블록 추가 및 저장 ---
                 blocks.push({
                     type: 'text',
                     content: content.trim(),
                     visible: true
                 });
-        
+
                 renderBlocks();
                 updatePreview();
                 saveData();
-        
+
                 // 모달 닫기 및 알림
                 closeTxtImportModal();
-                alert("📥 텍스트 불러오기 완료!");
+                alert(mode === 'overwrite' ? "↻ 덮어쓰기로 텍스트 불러오기 완료!" : "📥 텍스트 불러오기 완료!");
                 setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
             };
         
             reader.readAsText(pendingTxtFile);
         }
 
-        
+
+        /* =========================================
+           TXT → RisuAI JSON 변환 (로컬 전용, 서버 전송 없음)
+           ========================================= */
+        let pendingTxtToJsonText = null;
+        let pendingTxtToJsonName = '';
+        let pendingTxtToJsonReader = null; // [TOBE Phase 2-6] S4 — 진행 중인 FileReader 추적
+
+        // --- 로 구분된 섹션 분리 + 빈 섹션 제거 + trim
+        function splitTxtByDashes(raw) {
+            // BOM 제거
+            if (raw.charCodeAt(0) === 0xFEFF) raw = raw.slice(1);
+            // 줄 단독으로 존재하는 --- (앞뒤 공백 허용) 기준으로 분리
+            const parts = raw.split(/(?:\r?\n|^)[ \t]*---+[ \t]*(?=\r?\n|$)/);
+            return parts
+                .map(p => p.replace(/^\s*\r?\n/, '').replace(/\r?\n\s*$/, '').trim())
+                .filter(p => p.length > 0);
+        }
+
+        function refreshTxtToJsonPreview() {
+            if (!pendingTxtToJsonText) return;
+            const sections = splitTxtByDashes(pendingTxtToJsonText);
+            const firstRoleEl = document.querySelector('input[name="txtJson-firstRole"]:checked');
+            const firstRole = firstRoleEl ? firstRoleEl.value : 'char';
+            const charCount = Math.ceil(sections.length / 2);
+            const userCount = sections.length - charCount;
+            const botLabel = firstRole === 'char' ? `봇 ${charCount}개` : `봇 ${userCount}개`;
+            const userLabel = firstRole === 'char' ? `유저 ${userCount}개` : `유저 ${charCount}개`;
+            document.getElementById('txtJson-preview').innerHTML =
+                `📊 감지된 메시지: <b>${sections.length}</b>개 · ${botLabel} / ${userLabel}`;
+        }
+
+        function openTxtToJsonModal(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // [TOBE Phase 2-6] S4 — 이전 reader 가 살아있으면 중단해서 race 방지
+            if (pendingTxtToJsonReader) {
+                try { pendingTxtToJsonReader.abort(); } catch (_) {}
+                pendingTxtToJsonReader.onload = null;
+                pendingTxtToJsonReader.onerror = null;
+                pendingTxtToJsonReader = null;
+            }
+
+            const reader = new FileReader();
+            pendingTxtToJsonReader = reader;
+            reader.onload = function(e) {
+                if (pendingTxtToJsonReader !== reader) return; // stale 콜백 무시
+                pendingTxtToJsonReader = null;
+                pendingTxtToJsonText = e.target.result;
+                pendingTxtToJsonName = file.name.replace(/\.txt$/i, '');
+
+                // 캐릭터 이름 기본값: 파일명에서 날짜/타임스탬프 부분 제거
+                const guessed = pendingTxtToJsonName
+                    .replace(/_\d{4}-\d{2}-\d{2}T?[\d.Z:-]*/i, '')
+                    .replace(/_yyyy-mm-dd/i, '')
+                    .trim() || '캐릭터';
+                document.getElementById('txtJson-charName').value = guessed;
+
+                // 첫 역할 라디오에 이벤트 연결 (중복 방지 후 한 번만 연결되도록)
+                document.querySelectorAll('input[name="txtJson-firstRole"]').forEach(el => {
+                    el.onchange = refreshTxtToJsonPreview;
+                });
+
+                document.getElementById('txtToJsonModal').style.display = 'flex';
+                document.getElementById('pickerOverlay').style.display = 'block';
+                refreshTxtToJsonPreview();
+            };
+            reader.onerror = function() {
+                if (pendingTxtToJsonReader !== reader) return;
+                pendingTxtToJsonReader = null;
+                alert('파일을 읽지 못했습니다.');
+            };
+            reader.readAsText(file, 'UTF-8');
+            input.value = '';
+        }
+
+        function closeTxtToJsonModal() {
+            // [TOBE Phase 2-6] S4 — 모달 닫을 때 진행 중인 reader 정리
+            if (pendingTxtToJsonReader) {
+                try { pendingTxtToJsonReader.abort(); } catch (_) {}
+                pendingTxtToJsonReader.onload = null;
+                pendingTxtToJsonReader.onerror = null;
+                pendingTxtToJsonReader = null;
+            }
+            document.getElementById('txtToJsonModal').style.display = 'none';
+            document.getElementById('pickerOverlay').style.display = 'none';
+            pendingTxtToJsonText = null;
+            pendingTxtToJsonName = '';
+        }
+
+        function executeTxtToJson() {
+            // [TOBE Phase 3-2] N1 — 빈 문자열("")도 새 안내 문구로 유도되도록 null/undefined 만 "파일 미선택" 처리
+            if (pendingTxtToJsonText == null) {
+                alert('파일이 선택되지 않았습니다.');
+                closeTxtToJsonModal();
+                return;
+            }
+
+            const sections = splitTxtByDashes(pendingTxtToJsonText);
+            if (sections.length === 0) {
+                // [TOBE Phase 3-2] N1 — 구분자 규칙을 명시
+                alert('변환할 메시지를 찾지 못했습니다.\n\n'
+                    + '구분자 규칙:\n'
+                    + '• "---" 를 한 줄 단독으로 입력해야 합니다.\n'
+                    + '• 같은 줄에 다른 문자가 섞이면 인식되지 않습니다.\n'
+                    + '• 파일이 완전히 비어 있지 않은지도 확인해 주세요.');
+                return;
+            }
+            // [TOBE Phase 3-2] N1 확장 — 1개만 감지되면 구분자 실수 가능성 경고
+            if (sections.length === 1) {
+                const proceed = confirm(
+                    '메시지 1개만 감지되었습니다.\n'
+                    + '"---" 를 한 줄 단독으로 넣었는지 확인하세요.\n\n'
+                    + '그대로 1-메시지 JSON으로 변환할까요?'
+                );
+                if (!proceed) return; // 모달 유지
+            }
+
+            const firstRole = document.querySelector('input[name="txtJson-firstRole"]:checked').value;
+            const charName = (document.getElementById('txtJson-charName').value || '').trim() || '캐릭터';
+            const chatName = (document.getElementById('txtJson-chatName').value || '').trim() || 'Chat 1';
+
+            const messages = sections.map((content, i) => ({
+                role: (i % 2 === 0)
+                    ? firstRole
+                    : (firstRole === 'char' ? 'user' : 'char'),
+                data: content
+            }));
+
+            const payload = {
+                type: 'risuChat',
+                ver: 2,
+                data: {
+                    message: messages,
+                    note: '',
+                    name: chatName,
+                    localLore: [],
+                    fmIndex: -1,
+                    id: ''
+                },
+                folders: []
+            };
+
+            // RisuAI 스타일 타임스탬프 (예: 2026-04-18T074630433Z)
+            const now = new Date();
+            const pad = (n, w = 2) => String(n).padStart(w, '0');
+            const ts =
+                now.getUTCFullYear() + '-' +
+                pad(now.getUTCMonth() + 1) + '-' +
+                pad(now.getUTCDate()) + 'T' +
+                pad(now.getUTCHours()) +
+                pad(now.getUTCMinutes()) +
+                pad(now.getUTCSeconds()) +
+                pad(now.getUTCMilliseconds(), 3) + 'Z';
+
+            // 파일명에서 위험한 문자 제거
+            const safeCharName = charName.replace(/[\\/:*?"<>|]/g, '_');
+            const filename = `${safeCharName}_${ts}_chat.json`;
+
+            const jsonStr = JSON.stringify(payload);
+            const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+            closeTxtToJsonModal();
+            alert(`✅ 변환 완료! 메시지 ${messages.length}개가 저장되었습니다.\n파일명: ${filename}`);
+        }
+
+
+        /* =========================================
+           [TOBE v1.9.4] JSON → TXT 역변환
+           ========================================= */
+        let pendingJsonToTxtData = null;   // 파싱된 RisuAI payload
+        let pendingJsonToTxtName = '';     // 파일명 기본값 (확장자 제거)
+        let pendingJsonToTxtReader = null; // 진행 중인 FileReader (race 방지)
+
+        // RisuAI 채팅 JSON 스키마 검증. validateProject 와 동일 기조.
+        function validateRisuChat(data) {
+            if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+                return { ok: false, reason: '최상위가 객체가 아닙니다.' };
+            }
+            if (data.type !== 'risuChat') {
+                return { ok: false, reason: 'type 이 "risuChat" 이 아닙니다.' };
+            }
+            if (!data.data || typeof data.data !== 'object' || Array.isArray(data.data)) {
+                return { ok: false, reason: 'data 필드가 객체가 아닙니다.' };
+            }
+            if (!Array.isArray(data.data.message)) {
+                return { ok: false, reason: 'data.message 가 배열이 아닙니다.' };
+            }
+            for (let i = 0; i < data.data.message.length; i++) {
+                const m = data.data.message[i];
+                if (!m || typeof m !== 'object') {
+                    return { ok: false, reason: `data.message[${i}] 가 객체가 아닙니다.` };
+                }
+                if (typeof m.data !== 'string') {
+                    return { ok: false, reason: `data.message[${i}].data 가 문자열이 아닙니다.` };
+                }
+            }
+            return { ok: true };
+        }
+
+        function refreshJsonToTxtPreview() {
+            if (!pendingJsonToTxtData) return;
+            const msgs = pendingJsonToTxtData.data.message;
+            const charCount = msgs.filter(m => m.role === 'char').length;
+            const userCount = msgs.filter(m => m.role === 'user').length;
+            const other = msgs.length - charCount - userCount;
+            const firstRole = msgs.length > 0 ? (msgs[0].role || '?') : '-';
+            const otherTxt = other > 0 ? ` · 기타 ${other}개` : '';
+            // [TOBE v1.9.4] role 은 JSON 원본에서 온 문자열이라 escapeHtml 필수
+            document.getElementById('jsonToTxt-preview').innerHTML =
+                `📊 메시지 <b>${msgs.length}</b>개 · 봇 ${charCount}개 / 유저 ${userCount}개${otherTxt} · 첫 역할: ${escapeHtml(firstRole)}`;
+        }
+
+        function openJsonToTxtModal(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // [TOBE v1.9.4] S4 와 동일 기조 — 이전 reader 살아있으면 중단
+            if (pendingJsonToTxtReader) {
+                try { pendingJsonToTxtReader.abort(); } catch (_) {}
+                pendingJsonToTxtReader.onload = null;
+                pendingJsonToTxtReader.onerror = null;
+                pendingJsonToTxtReader = null;
+            }
+
+            const reader = new FileReader();
+            pendingJsonToTxtReader = reader;
+            reader.onload = function (e) {
+                if (pendingJsonToTxtReader !== reader) return; // stale 콜백 무시
+                pendingJsonToTxtReader = null;
+
+                let data;
+                try {
+                    data = JSON.parse(e.target.result);
+                } catch (err) {
+                    alert('⚠️ JSON 파싱 실패\n' + (err && err.message ? err.message : ''));
+                    input.value = '';
+                    return;
+                }
+
+                const v = validateRisuChat(data);
+                if (!v.ok) {
+                    alert('⚠️ RisuAI 채팅 JSON 형식이 아닙니다.\n사유: ' + v.reason);
+                    input.value = '';
+                    return;
+                }
+
+                pendingJsonToTxtData = data;
+                pendingJsonToTxtName = file.name.replace(/\.json$/i, '');
+
+                // [TOBE v1.9.4] 표시 전 escapeHtml — file.name/name 모두 외부 입력
+                document.getElementById('jsonToTxt-filename').textContent = file.name;
+                document.getElementById('jsonToTxt-chatName').textContent =
+                    (typeof data.data.name === 'string' ? data.data.name : '') || '(이름 없음)';
+                refreshJsonToTxtPreview();
+
+                document.getElementById('jsonToTxtModal').style.display = 'flex';
+            };
+            reader.onerror = function () {
+                if (pendingJsonToTxtReader !== reader) return;
+                pendingJsonToTxtReader = null;
+                alert('⚠️ 파일 읽기 실패');
+            };
+            reader.readAsText(file);
+        }
+
+        function closeJsonToTxtModal() {
+            document.getElementById('jsonToTxtModal').style.display = 'none';
+            if (pendingJsonToTxtReader) {
+                try { pendingJsonToTxtReader.abort(); } catch (_) {}
+                pendingJsonToTxtReader.onload = null;
+                pendingJsonToTxtReader.onerror = null;
+                pendingJsonToTxtReader = null;
+            }
+            pendingJsonToTxtData = null;
+            pendingJsonToTxtName = '';
+            const input = document.getElementById('jsonToTxtInput');
+            if (input) input.value = '';
+        }
+
+        function executeJsonToTxt() {
+            if (!pendingJsonToTxtData) return;
+            const msgs = pendingJsonToTxtData.data.message;
+            // TXT→JSON 과 대칭: 본문만, `\n---\n` 로 이어붙임
+            const txt = msgs.map(m => m.data).join('\n---\n');
+
+            const safeName = pendingJsonToTxtName.replace(/[\\/:*?"<>|]/g, '_');
+            const filename = `${safeName || 'chat'}.txt`;
+
+            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+            const count = msgs.length;
+            closeJsonToTxtModal();
+            alert(`✅ 변환 완료! 메시지 ${count}개 → ${filename}`);
+        }
+
 
         /* =========================================
            Bookmarklet Modal Logic
            ========================================= */
+        // 북마크릿 원본 JS. href 에 직접 박으면 따옴표/앰퍼샌드 이스케이프가 꼬이므로
+        // 문자열로 보관했다가 href 에 할당한다.
+        const BOOKMARKLET_CAVEDUCK = 'javascript:(async function(){let box=document.createElement("div");box.style.cssText="position:fixed;top:10px;left:10px;z-index:99999;background:rgba(0,0,0,0.8);color:white;padding:15px;border-radius:10px;font-size:14px;font-weight:bold;";box.innerText="🚀 줄바꿈 분리 저장 시작(v2)...";document.body.appendChild(box);let count=0;while(true){let btn=Array.from(document.querySelectorAll("button")).find(b=>b.innerText.replace(/\\s/g,"").includes("더보기"));if(btn){count++;box.innerText=`👆 과거 로딩 중... (${count}회)`;btn.click();await new Promise(r=>setTimeout(r,1500));window.scrollTo(0,0);}else{break;}}box.innerText="📝 데이터 처리 중...";await new Promise(r=>setTimeout(r,500));let msgs=document.querySelectorAll("p.text-caveduck-shadow, div[class*=\\"bg-background-markdown\\"]");let res=[];let lastP=null;msgs.forEach(m=>{if(!m.innerText.trim())return;let curP=m.parentElement;if(lastP&&curP!==lastP)res.push("---");lastP=curP;if(m.tagName.toLowerCase()==="p"){let s=m.getAttribute("style")||"";let t=m.innerText.trim();if(s.includes("--color-user-message")||s.includes("--color-char-message")){t.split("\\n").forEach(l=>{if(l.trim())res.push(`"${l.trim()}"`);});}else{t.split("\\n").forEach(l=>{if(l.trim())res.push(l.trim());});}}else{res.push("```\\n"+m.outerHTML+"\\n```");}});let blob=new Blob([res.join("\\n\\n")],{type:"text/plain"});let link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=`케이브덕_하이브리드_v2_${new Date().toISOString().slice(0,10)}.txt`;document.body.appendChild(link);link.click();document.body.removeChild(link);box.innerText="✅ 저장 완료!";setTimeout(()=>box.remove(),4000);})();';
+
+        const BOOKMARKLET_ROFAN = 'javascript:(async function(){let box=document.createElement("div");box.style.cssText="position:fixed;top:10px;left:10px;z-index:99999;background:rgba(0,0,0,0.85);color:white;padding:15px;border-radius:10px;font-size:14px;font-weight:bold;max-width:300px;";box.innerText="🚀 로판AI 저장 시작(v2)...";document.body.appendChild(box);function gt(el,nq){let segs=[];let cur={t:"",n:false};function flush(){if(cur.t.trim()){segs.push({t:cur.t,n:cur.n});}cur={t:"",n:false};}function walk(nd,nar){if(nd.nodeType===3){let isN=nar;if(isN!==cur.n&&cur.t.trim()){flush();}cur.n=isN;cur.t+=nd.textContent;}else if(nd.nodeName==="BR"){cur.t+="\\n";}else if(nd.nodeName==="HR"){flush();segs.push({t:"───",n:true});}else if(nd.nodeName==="TABLE"){flush();let tt="";nd.querySelectorAll("tr").forEach(row=>{let cells=Array.from(row.querySelectorAll("th,td")).map(c=>c.innerText.trim());tt+=cells.join(" | ")+"\\n";});segs.push({t:tt,n:true});}else if(nd.nodeType===1){if(nd.nodeName==="PRE"){flush();segs.push({t:nd.innerText,n:true});return;}if(nd.nodeName==="DETAILS"){nd.childNodes.forEach(c=>walk(c,true));return;}if(/^H[1-6]$/.test(nd.nodeName)){flush();segs.push({t:nd.innerText,n:true});return;}if(nd.nodeName==="P"&&nd.hasAttribute("style")){flush();segs.push({t:nd.innerText,n:true});return;}if(nd.classList&&nd.classList.contains("mt-4")){flush();segs.push({t:nd.innerText,n:true});return;}let isN=nar||nd.hasAttribute("data-narration");if(nd.classList&&nd.classList.contains("overflow-x-auto")){flush();let tt="";nd.querySelectorAll("table").forEach(t=>{t.querySelectorAll("tr").forEach(row=>{let cells=Array.from(row.querySelectorAll("th,td")).map(c=>c.innerText.trim());tt+=cells.join(" | ")+"\\n";});});segs.push({t:tt,n:true});}else{nd.childNodes.forEach(c=>walk(c,isN));}}}walk(el,false);flush();let r=[];segs.forEach(s=>{let text=s.t.trim();if(!text)return;if(s.n||nq){r.push(text);}else{text.split("\\n").forEach(line=>{let l=line.trim();if(!l)return;if(l.startsWith(\'"\')&&l.endsWith(\'"\')){r.push(l);}else if(l==="---"||l==="───"){r.push(l);}else if(/^\\[.+\\]$/.test(l)){r.push(l);}else if(l.indexOf("|")>0&&l.indexOf("|")<=25&&!/^[가-힣a-zA-Z"\']/.test(l)){r.push(l);}else if(l.startsWith("(")&&l.endsWith(")")){r.push(l);}else{r.push(\'"\'+l+\'"\');}});}});return r.join("\\n\\n");}box.innerText="📜 위로 스크롤 중...";let sc=document.querySelector(\'[class*="overflow-y-auto"]\')||document.querySelector(\'[class*="overflow-y-scroll"]\');if(sc){let prevH=-1,stable=0;for(let i=0;i<300;i++){sc.scrollTop=0;await new Promise(r=>setTimeout(r,500));if(sc.scrollHeight===prevH){stable++;if(stable>=3)break;}else{stable=0;}prevH=sc.scrollHeight;box.innerText="📜 위로 로딩 중... ("+i+")";}box.innerText="📜 아래로 훑는 중...";let totalH=sc.scrollHeight;let step=sc.clientHeight*0.7;for(let pos=0;pos<=totalH+step;pos+=step){sc.scrollTop=pos;await new Promise(r=>setTimeout(r,250));box.innerText="📜 훑는 중... "+Math.min(100,Math.round(pos/totalH*100))+"%";}}await new Promise(r=>setTimeout(r,500));box.innerText="📝 메시지 수집 중...";let msgs=[];document.querySelectorAll("p").forEach(p=>{let span=p.querySelector("span");if(!span)return;let s=(span.getAttribute("style")||"").toLowerCase();let cs=getComputedStyle(span).color;if(s.includes("818cf8")||cs==="rgb(129, 140, 248)"){msgs.push({el:p,type:"user"});}});document.querySelectorAll(\'div[style*="Pretendard"],div[style*="pretendard"]\').forEach(div=>{if(div.classList&&div.classList.length>0)return;let directSpan=div.querySelector(":scope > span");if(!directSpan)return;let ss=(directSpan.getAttribute("style")||"").toLowerCase();if(!ss.includes("ffffff")&&!ss.includes("ffc200"))return;if(div.querySelector("div.mt-1"))return;msgs.push({el:div,type:"ai"});});document.querySelectorAll("div.mt-1").forEach(div=>{let html=div.innerHTML||"";if(html.includes("data-narration")||html.includes("#FFFFFF")||html.includes("#FFC200")||html.includes("#ffffff")||html.includes("#ffc200")){msgs.push({el:div,type:"ai"});}else{let span=div.querySelector(":scope > span");if(span){let s=(span.getAttribute("style")||"").toLowerCase();if(s.includes("pretendard")||s.includes("font-size")){let cs=getComputedStyle(span).color;if(cs==="rgb(255, 255, 255)")msgs.push({el:div,type:"ai"});}}}});document.querySelectorAll("div.mt-4").forEach(div=>{if(div.querySelector("div[style]")&&div.innerText.trim().length>10){let dominated=msgs.some(m=>m.el.contains(div));if(!dominated)msgs.push({el:div,type:"ai",nq:true});}});let filtered=[];for(let m of msgs){let dominated=false;for(let i=0;i<filtered.length;i++){if(filtered[i].el.contains(m.el)){dominated=true;break;}if(m.el.contains(filtered[i].el)){filtered.splice(i,1);i--;}}if(!dominated)filtered.push(m);}filtered.sort((a,b)=>{let pos=a.el.compareDocumentPosition(b.el);return pos&Node.DOCUMENT_POSITION_FOLLOWING?-1:1;});let lines=[];filtered.forEach(m=>{let text=gt(m.el,m.nq||false).trim();if(text){lines.push(text+"\\n\\n---\\n");}});if(!lines.length){box.innerText="⚠️ 메시지를 찾지 못했습니다.";setTimeout(()=>box.remove(),5000);return;}let blob=new Blob([lines.join("\\n")],{type:"text/plain"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="rofan_ai_v2_"+new Date().toISOString().slice(0,10)+".txt";document.body.appendChild(a);a.click();document.body.removeChild(a);box.innerText="✅ 저장 완료! ("+filtered.length+"개 메시지)";setTimeout(()=>box.remove(),4000);})();';
+
         function openBookmarkletModal() {
+            const cav = document.getElementById('bookmarklet-caveduck');
+            const rof = document.getElementById('bookmarklet-rofan');
+            if (cav) cav.setAttribute('href', BOOKMARKLET_CAVEDUCK);
+            if (rof) rof.setAttribute('href', BOOKMARKLET_ROFAN);
             document.getElementById('bookmarkletModal').style.display = 'flex';
             document.getElementById('pickerOverlay').style.display = 'block';
         }
@@ -4398,7 +5128,8 @@ function applyCustomCss(cssContent) {
                 if (b.visible === false) return;
         
                 if (b.type === 'image') {
-                    html += `<div style="text-align:center; margin-bottom:${paraSpacing}px;"><img src="${b.content}" style="width:${b.width || 100}%; border-radius:8px; display:inline-block;"></div>`;
+                    // [TOBE Phase 4] escapeHtml 전수 스캔 — 내보내기 HTML 의 img src 속성 이스케이프
+                    html += `<div style="text-align:center; margin-bottom:${paraSpacing}px;"><img src="${escapeHtml(b.content)}" style="width:${b.width || 100}%; border-radius:8px; display:inline-block;"></div>`;
                 } else {
                     let tempDiv = document.createElement('div');
                     // 파싱된 HTML을 임시 div에 넣음
@@ -4646,6 +5377,149 @@ function finishInject(count, msg) {
                 reader.readAsDataURL(blob);
             }
         });
+
+        /* =========================================
+           [TOBE Phase 1-T] 자동 테스트 스니펫
+           실행: index_TOBE.html?test=1 로 열면 콘솔에서 assert 결과 출력
+           ========================================= */
+        (function () {
+            if (!new URLSearchParams(location.search).has('test')) return;
+            // DOM ready 이후 실행 (window.onload 뒤로 밀기)
+            window.addEventListener('load', function () {
+                console.group('🧪 자동 테스트 (Phase 1~4)');
+                let pass = 0, fail = 0;
+                function t(name, cond) {
+                    if (cond) { pass++; console.log('✅', name); }
+                    else { fail++; console.error('❌', name); }
+                }
+
+                // escapeHtml
+                t('escapeHtml: <b> 태그', escapeHtml('<b>') === '&lt;b&gt;');
+                t('escapeHtml: & 문자', escapeHtml('&') === '&amp;');
+                t('escapeHtml: 큰따옴표', escapeHtml('"x"') === '&quot;x&quot;');
+                t('escapeHtml: 작은따옴표', escapeHtml("'x'") === '&#39;x&#39;');
+                t('escapeHtml: 마크다운 기호 보존', escapeHtml('*italic* **bold**') === '*italic* **bold**');
+                t('escapeHtml: null 안전', escapeHtml(null) === '');
+                t('escapeHtml: undefined 안전', escapeHtml(undefined) === '');
+                t('escapeHtml: 숫자 캐스팅', escapeHtml(42) === '42');
+
+                // validateProject
+                t('validate: 빈 객체', validateProject({}).ok === true);
+                t('validate: 정상 blocks', validateProject({ blocks: [{ type: 'text', content: 'x' }] }).ok === true);
+                t('validate: blocks 비배열 차단', validateProject({ blocks: 'x' }).ok === false);
+                t('validate: content 비문자열 차단', validateProject({ blocks: [{ type: 'text', content: 123 }] }).ok === false);
+                t('validate: type 비문자열 차단', validateProject({ blocks: [{ type: 1, content: 'x' }] }).ok === false);
+                t('validate: presets 비배열 차단', validateProject({ presets: 'x' }).ok === false);
+                t('validate: null 최상위 차단', validateProject(null).ok === false);
+
+                // splitTxtByDashes
+                t('split: 2 섹션', splitTxtByDashes('a\n---\nb').length === 2);
+                t('split: 빈 문자열', splitTxtByDashes('').length === 0);
+                t('split: 구분자 없음', splitTxtByDashes('a').length === 1);
+                t('split: 빈 섹션 필터', splitTxtByDashes('a\n---\n\n---\nb').length === 2);
+
+                // [TOBE Phase 2-3] C4 sanitizer 도입 후 재활성화
+                t('parseContent: onerror 차단',
+                    !/onerror\s*=/i.test(parseContent('<img src=x onerror=alert(1)>')));
+                t('parseContent: javascript: 차단',
+                    !/javascript\s*:/i.test(parseContent('<a href="javascript:alert(1)">x</a>')));
+                t('parseContent: svg onload 차단',
+                    !/onload\s*=/i.test(parseContent('<svg onload=alert(1)>')));
+                t('parseContent: 정상 <b> 보존', /<b>/.test(parseContent('<b>굵게</b>')));
+                t('parseContent: 정상 <br> 보존', /<br\s*\/?>/i.test(parseContent('줄<br>바꿈')));
+                // sanitizeHtml 단위 테스트
+                t('sanitize: on* 속성 제거',
+                    !/onclick/i.test(sanitizeHtml('<span onclick="x()">x</span>')));
+                t('sanitize: script 태그 unwrap',
+                    !/<script/i.test(sanitizeHtml('<script>alert(1)<\/script>X')));
+                t('sanitize: 정상 href 보존',
+                    /href="https:/i.test(sanitizeHtml('<a href="https://x.com">x</a>')));
+                t('sanitize: data:image src 허용',
+                    /src="data:image/i.test(sanitizeHtml('<img src="data:image/png;base64,AAA">')));
+                t('sanitize: data:text src 차단',
+                    !/src="data:text/i.test(sanitizeHtml('<img src="data:text/html,<script>alert(1)<\/script>">')));
+
+                // WNCS 이스케이프 — 실제 파서 포맷에 맞춘 입력
+                // 주의1: inline script 안에 닫는 태그 리터럴 금지 → '<\/script>' 로 분리
+                // 주의2: 실제 renderWNCS 포맷 사용 — GN:count-title / AN:note / nick|date|Y|likes|content
+                const wncsInput = 'WNCS{\n' +
+                    'GN:10-테스트화\n' +
+                    'AN:작가말<script>alert(1)<\/script>\n' +
+                    '악성닉|2024-01-01|Y|99|<img src=x onerror=alert(1)>\n' +
+                    'R:|대댓닉|답글<script>alert(2)<\/script>\n' +
+                    '}';
+                const wncsOut = renderWNCS(wncsInput);
+                // 실제 렌더가 일어났는지 1차 확인 (파싱 자체가 실패하면 통과가 무의미하므로)
+                t('WNCS: 댓글 렌더 확인', wncsOut.includes('wncs-main-comment'));
+                t('WNCS: 작가말 렌더 확인', wncsOut.includes('wncs-author-note'));
+                // 진짜 검증: 위험 패턴이 원형 그대로 살아있지 않아야 함
+                t('WNCS: <script> 이스케이프', !/<script>\s*alert/i.test(wncsOut));
+                // [제거됨] `WNCS: onerror 속성 이스케이프` — <img 태그 이스케이프 와 중복.
+                // escapeHtml 이후 "onerror=alert" 은 <img → &lt;img 로 무력화되므로
+                // 태그 자체의 이스케이프만 검증하면 충분함.
+                t('WNCS: <img 태그 이스케이프', !/<img[^>]*src\s*=/i.test(wncsOut));
+
+                // [TOBE Phase 4] N2/N4/전수스캔 회귀 방지
+                // N4: 상수 블록이 실제로 상수로 노출되어 있는지
+                t('const: PREVIEW_DEBOUNCE_MS 정의', typeof PREVIEW_DEBOUNCE_MS === 'number' && PREVIEW_DEBOUNCE_MS === 800);
+                t('const: BG_IMAGE_LIMIT_BYTES 정의', typeof BG_IMAGE_LIMIT_BYTES === 'number' && BG_IMAGE_LIMIT_BYTES === 2 * 1024 * 1024);
+                t('const: REGEX_BIG_BLOCK_BYTES 정의', typeof REGEX_BIG_BLOCK_BYTES === 'number' && REGEX_BIG_BLOCK_BYTES === 50 * 1024);
+                t('const: WNCS_FIELD_LIMIT 정의', typeof WNCS_FIELD_LIMIT === 'number' && WNCS_FIELD_LIMIT === 100);
+
+                // N2: WNCS 필드 길이 가드 — 장문 입력이 제한값 이하로 잘리는지
+                const longTitle = 'T'.repeat(500);
+                const longAN = 'A'.repeat(5000);
+                const wncsLongOut = renderWNCS('WNCS{\nGN:9-' + longTitle + '\nAN:' + longAN + '\n}');
+                t('N2: globalInfo.title 100자 제한',
+                    (wncsLongOut.match(/T/g) || []).length <= WNCS_FIELD_LIMIT * 2); // title 이 summary/episode 2번 참조
+                t('N2: authorNote 2000자 제한',
+                    (wncsLongOut.match(/A/g) || []).length <= WNCS_AUTHOR_NOTE_LIMIT);
+
+                // 전수 스캔 회귀: renderBlocks 가 textarea 본문에 닫는태그 주입을 허용하지 않는지
+                // (렌더는 DOM 접근이 필요하므로 escapeHtml 단위로 갈음)
+                // 주의: inline script 안에서 닫는 script 리터럴 금지 → '<\/script>' 로 분리
+                t('escapeHtml: textarea 닫는태그 중화',
+                    escapeHtml('</textarea><script>x<\/script>') === '&lt;/textarea&gt;&lt;script&gt;x&lt;\/script&gt;');
+                t('escapeHtml: 속성 따옴표 중화',
+                    escapeHtml('"><img onerror=alert(1) src=x>') ===
+                    '&quot;&gt;&lt;img onerror=alert(1) src=x&gt;');
+
+                // [TOBE v1.9.4] JSON → TXT 역변환 스키마 검증
+                t('validateRisuChat: 정상 payload',
+                    validateRisuChat({type:'risuChat', ver:2, data:{message:[{role:'char', data:'x'}]}}).ok === true);
+                t('validateRisuChat: 빈 message 배열 허용',
+                    validateRisuChat({type:'risuChat', data:{message:[]}}).ok === true);
+                t('validateRisuChat: type 불일치 차단',
+                    validateRisuChat({type:'other', data:{message:[]}}).ok === false);
+                t('validateRisuChat: message 비배열 차단',
+                    validateRisuChat({type:'risuChat', data:{message:'x'}}).ok === false);
+                t('validateRisuChat: data 누락 차단',
+                    validateRisuChat({type:'risuChat'}).ok === false);
+                t('validateRisuChat: data 가 배열이면 차단',
+                    validateRisuChat({type:'risuChat', data:[]}).ok === false);
+                t('validateRisuChat: 메시지 data 비문자열 차단',
+                    validateRisuChat({type:'risuChat', data:{message:[{role:'char', data:123}]}}).ok === false);
+                t('validateRisuChat: null 차단',
+                    validateRisuChat(null).ok === false);
+                t('validateRisuChat: 최상위 배열 차단',
+                    validateRisuChat([]).ok === false);
+
+                // JSON → TXT 왕복 대칭성 (content 보존)
+                const rt = {type:'risuChat', ver:2, data:{message:[
+                    {role:'char', data:'안녕'},
+                    {role:'user', data:'반가워'},
+                    {role:'char', data:'나도'}
+                ]}};
+                const rtTxt = rt.data.message.map(m => m.data).join('\n---\n');
+                t('JSON→TXT: 3개 메시지 --- 연결',
+                    rtTxt === '안녕\n---\n반가워\n---\n나도');
+                t('JSON→TXT: splitTxtByDashes 로 왕복 길이 일치',
+                    splitTxtByDashes(rtTxt).length === rt.data.message.length);
+
+                console.log(`\n결과: ${pass}개 통과, ${fail}개 실패`);
+                console.groupEnd();
+            });
+        })();
 
     </script>
 </body>
