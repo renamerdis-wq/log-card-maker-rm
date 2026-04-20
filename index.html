@@ -1377,6 +1377,37 @@
             background: #2563eb;
         }
 
+        .bookmarklet-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bookmarklet-copy-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+            transition: background 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .bookmarklet-copy-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .bookmarklet-copy-btn.copied {
+            background: #0d9488;
+        }
+
         .bookmarklet-desc {
             font-size: 13px;
             color: #64748b;
@@ -2335,30 +2366,44 @@
 
         <div class="bookmarklet-desc">
             보안상 버튼 클릭만으로는 추가할 수 없습니다.<br>
-            아래 <b>파란 버튼</b>을 마우스로 잡고<br>
-            브라우저 상단 <b>[즐겨찾기 바]</b>로<br>
-            <b>드래그 & 드롭</b> 해주세요!<br>
+            <b>PC:</b> 아래 <b>파란 버튼</b>을 마우스로 잡고 <b>[즐겨찾기 바]</b>로 <b>드래그 & 드롭</b><br>
+            <b>모바일:</b> 옆의 <b>초록 [복사]</b> 버튼을 눌러 북마크 URL로 붙여넣기
         </div>
 
         <div style="padding:6px 10px; display:flex; flex-direction:column; gap:10px;">
             <div>
-                <a id="bookmarklet-caveduck" class="bookmarklet-pill" href="#"
-                   onclick="alert('클릭하는 게 아닙니다!\n버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 \'드래그\' 하세요.\n\n[케이브덕 전용]\n대화방에 들어가서 추가한 북마크를 눌러주세요. TXT 파일이 저장됩니다.\n(맞춤채팅방 설정에서 색상테마 다크, 폰트색상 기본값, 글자 그림자 켜기로 설정해야 합니다.)'); return false;">
-                    📥 케이브덕 저장기 v2
-                </a>
+                <div class="bookmarklet-row">
+                    <a id="bookmarklet-caveduck" class="bookmarklet-pill" href="#"
+                       onclick="alert('클릭하는 게 아닙니다!\nPC: 버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 \'드래그\' 하세요.\n모바일: 옆의 [복사] 버튼을 눌러주세요.\n\n[케이브덕 전용]\n대화방에 들어가서 추가한 북마크를 눌러주세요. TXT 파일이 저장됩니다.\n(맞춤채팅방 설정에서 색상테마 다크, 폰트색상 기본값, 글자 그림자 켜기로 설정해야 합니다.)'); return false;">
+                        📥 케이브덕 저장기 v2
+                    </a>
+                    <button type="button" class="bookmarklet-copy-btn"
+                            onclick="copyBookmarklet('caveduck', this)"
+                            title="모바일용: 북마크릿 코드를 클립보드에 복사합니다">📋 복사</button>
+                </div>
                 <div style="font-size:11px; color:#94a3b8; margin-top:4px; padding-left:4px;">
                     케이브덕: UI모드 소설 + 지문대사 분리(캐릭터, 내 채팅 모두 ON) + 글자 그림자 ON 설정 필요
                 </div>
             </div>
 
             <div>
-                <a id="bookmarklet-rofan" class="bookmarklet-pill" href="#"
-                   onclick="alert('클릭하는 게 아닙니다!\n버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 \'드래그\' 하세요.\n\n[로판AI 전용]\n대화방에 들어가서 추가한 북마크를 눌러주세요. 위/아래로 자동 스크롤하며 메시지를 수집한 뒤 TXT 파일로 저장합니다.'); return false;">
-                    📥 로판AI 저장기 v2
-                </a>
+                <div class="bookmarklet-row">
+                    <a id="bookmarklet-rofan" class="bookmarklet-pill" href="#"
+                       onclick="alert('클릭하는 게 아닙니다!\nPC: 버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 \'드래그\' 하세요.\n모바일: 옆의 [복사] 버튼을 눌러주세요.\n\n[로판AI 전용]\n대화방에 들어가서 추가한 북마크를 눌러주세요. 위/아래로 자동 스크롤하며 메시지를 수집한 뒤 TXT 파일로 저장합니다.'); return false;">
+                        📥 로판AI 저장기 v2
+                    </a>
+                    <button type="button" class="bookmarklet-copy-btn"
+                            onclick="copyBookmarklet('rofan', this)"
+                            title="모바일용: 북마크릿 코드를 클립보드에 복사합니다">📋 복사</button>
+                </div>
                 <div style="font-size:11px; color:#94a3b8; margin-top:4px; padding-left:4px;">
                     로판AI: 설정 > 추가설정 초기화
                 </div>
+            </div>
+
+            <div style="font-size:11px; color:#64748b; background:#fef3c7; padding:8px 10px; border-radius:8px; line-height:1.5; text-align:left;">
+                📱 <b>모바일 사용법:</b><br>
+                1) [복사] 버튼 클릭 → 2) 브라우저에서 아무 북마크나 추가 → 3) 해당 북마크 편집 → 4) URL 자리에 <b>붙여넣기(paste)</b> 후 저장 → 5) 대화방에서 그 북마크 실행
             </div>
         </div>
 
@@ -5133,6 +5178,36 @@ function applyCustomCss(cssContent) {
         function closeBookmarkletModal() {
             document.getElementById('bookmarkletModal').style.display = 'none';
             document.getElementById('pickerOverlay').style.display = 'none';
+        }
+
+        // 모바일용: 북마크릿 코드를 클립보드에 복사
+        async function copyBookmarklet(kind, btn) {
+            const code = kind === 'caveduck' ? BOOKMARKLET_CAVEDUCK : BOOKMARKLET_ROFAN;
+            const originalText = btn.textContent;
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(code);
+                } else {
+                    // 구형 브라우저 폴백
+                    const ta = document.createElement('textarea');
+                    ta.value = code;
+                    ta.style.position = 'fixed';
+                    ta.style.top = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.focus();
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+                btn.textContent = '✅ 복사됨';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (e) {
+                alert('복사 실패: ' + (e && e.message ? e.message : '알 수 없는 오류') + '\n수동으로 길게 눌러 선택·복사해주세요.');
+            }
         }
 
         /* =========================================
