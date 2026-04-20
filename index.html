@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.9.4</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
+    <title>로그 카드 생성기 v1.9.4 [TEST: modern-screenshot]</title>
+    <!-- TEST: html-to-image → modern-screenshot 교체 (속도 개선 실험) -->
+    <script src="https://cdn.jsdelivr.net/npm/modern-screenshot@4.6.0/dist/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
     <style>
@@ -3646,6 +3647,22 @@ __ __: 글자 1단계 작게
            8. Save / Export Functions
            ========================================= */
 
+        // [TEST: 추가 최적화] 폰트 임베드 cssText 캐시. 첫 저장 시 계산, 이후 재사용.
+        // 단, 카드 안의 사용 폰트 셋이 바뀌면 캐시는 무효화해야 한다 (안 그러면 시스템 폴백으로 떨어짐).
+        let cachedFontCssText = null;
+        let cachedFontSignature = null;
+
+        // 카드 내 모든 요소의 computed font-family 를 모아 정렬·조인한 시그니처.
+        // 폰트 선택이 바뀌면 시그니처가 달라져 캐시 무효화 트리거가 된다.
+        function computeFontSignature(root) {
+            const set = new Set();
+            set.add(getComputedStyle(root).fontFamily);
+            root.querySelectorAll('*').forEach(el => {
+                set.add(getComputedStyle(el).fontFamily);
+            });
+            return Array.from(set).sort().join('|');
+        }
+
         // Image Save: 화질 옵션(quality) 추가 및 버튼 상태 개별 제어
         async function saveImage(btn, quality) {
             const widthInput = document.getElementById('cardWidthInput');
@@ -3667,9 +3684,9 @@ __ __: 글자 1단계 작게
             // 화질 설정: 고화질이면 2, 기본이면 1
             const ratio = (quality === 'high') ? 2 : 1;
 
-            htmlToImage.toPng(frame, {
-                cacheBust: true,
-                pixelRatio: ratio, // 여기서 화질 결정
+            // [TEST] modern-screenshot. pixelRatio → scale, toPng → toBlob 로 변경.
+            const renderOptions = {
+                scale: ratio,
                 width: realWidth,
                 height: frame.scrollHeight,
                 style: {
@@ -3684,23 +3701,59 @@ __ __: 글자 1단계 작게
                     whiteSpace: 'normal',
                     overflow: 'visible'
                 }
-            })
-                .then(dataUrl => {
-                    const link = document.createElement('a');
-                    // 파일명에 화질 정보(_HQ 등)를 붙여서 구분
-                    const suffix = (quality === 'high') ? '_HQ' : '';
-                    link.download = getFileName('png').replace('.png', `${suffix}.png`);
-                    link.href = dataUrl;
-                    link.click();
+            };
 
-                    // 버튼 텍스트 원복
-                    setTimeout(() => { btn.innerText = originalText; }, 1000);
-                })
-                .catch(err => {
-                    console.error('Capture failed:', err);
-                    alert("이미지 저장에 실패했습니다. 다시 시도해주세요.");
-                    btn.innerText = originalText;
-                });
+            // 현재 카드의 폰트 시그니처 계산 → 이전 캐시와 다르면 무효화
+            const currentFontSig = computeFontSignature(frame);
+            const cacheValid = (cachedFontCssText !== null && cachedFontSignature === currentFontSig);
+            if (!cacheValid && cachedFontCssText !== null) {
+                console.log('[modern-screenshot] font set changed → invalidating cache');
+                cachedFontCssText = null;
+            }
+
+            try {
+                let blob;
+                if (cacheValid) {
+                    // 캐시 히트: 저장된 폰트 cssText 주입 → 폰트 fetch/임베드 단계 스킵.
+                    blob = await modernScreenshot.domToBlob(frame, {
+                        ...renderOptions,
+                        font: { cssText: cachedFontCssText }
+                    });
+                } else {
+                    // 캐시 미스(첫 저장 또는 폰트 변경): createContext 로 폰트 임베드 끝낸 뒤 그 컨텍스트로 blob 생성.
+                    // 끝나면 fontCssTexts(Map) 값들을 합쳐서 캐시 → 같은 폰트 셋의 다음 저장부터 스킵.
+                    const ctx = await modernScreenshot.createContext(frame, { ...renderOptions, autoDestruct: false });
+                    blob = await modernScreenshot.domToBlob(ctx);
+                    try {
+                        if (ctx && ctx.fontCssTexts && ctx.fontCssTexts.size > 0) {
+                            cachedFontCssText = Array.from(ctx.fontCssTexts.values()).join('\n\n');
+                            cachedFontSignature = currentFontSig;
+                            console.log('[modern-screenshot] font cssText cached:',
+                                cachedFontCssText.length, 'chars,',
+                                ctx.fontCssTexts.size, 'entries');
+                        }
+                    } catch (cacheErr) {
+                        console.warn('Font cssText cache extraction failed:', cacheErr);
+                    } finally {
+                        modernScreenshot.destroyContext(ctx);
+                    }
+                }
+
+                // [TEST: 추가 최적화] Blob → ObjectURL: dataURL base64 인코딩 비용(약 +33% 크기) 제거.
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                const suffix = (quality === 'high') ? '_HQ' : '';
+                link.download = getFileName('png').replace('.png', `${suffix}.png`);
+                link.href = url;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+                setTimeout(() => { btn.innerText = originalText; }, 1000);
+            } catch (err) {
+                console.error('Capture failed:', err);
+                alert("이미지 저장에 실패했습니다. 다시 시도해주세요.");
+                btn.innerText = originalText;
+            }
         }
 
         /* =========================================
