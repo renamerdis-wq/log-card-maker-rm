@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.9.4 [TEST: modern-screenshot]</title>
-    <!-- TEST: html-to-image → modern-screenshot 교체 (속도 개선 실험) -->
+    <title>로그 카드 생성기 v1.9.5</title>
+    <!-- v1.9.5: html-to-image → modern-screenshot 교체 + 폰트 cssText 캐싱 + toBlob + 줄바꿈 보정 -->
     <script src="https://cdn.jsdelivr.net/npm/modern-screenshot@4.6.0/dist/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -3685,7 +3685,7 @@ __ __: 글자 1단계 작게
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_9_4_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_9_5_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -3708,11 +3708,40 @@ __ __: 글자 1단계 작게
             return Array.from(set).sort().join('|');
         }
 
+        // [v1.9.5] 줄바꿈 보정(C): 캡처 직전 텍스트 컨테이너에 폭 버퍼를 주입해서
+        // modern-screenshot 의 foreignObject 서브픽셀 폰트 메트릭 드리프트를 흡수. 캡처 후 원복.
+        // - .bubble: max-width 85% → calc(85% + N px)
+        // - .text-part: margin-right -N px 로 실효 폭 +N px
+        // <style> 전역 주입은 라이브러리 내부 클론 타이밍에 따라 반영이 불확실해서 **인라인 스타일**로 직접 주입.
+        // 인라인 스타일은 항상 소스 DOM 에 남아 있어 모든 clone 방식에 안전하게 따라간다.
+        // 버퍼는 한글 기준 1글자 폭 수준(10px) 으로 넉넉하게. 시각 변화는 거의 무시 가능.
+        const WRAP_FIX_BUFFER_PX = 10;
+        const WRAP_FIX_DATA_KEY = 'v195WrapFixPrev'; // dataset 키(camelCase)
+
+        function applyWrapFix(root) {
+            root.querySelectorAll('.bubble').forEach(el => {
+                el.dataset[WRAP_FIX_DATA_KEY] = el.getAttribute('style') || '';
+                el.style.setProperty('max-width', `calc(85% + ${WRAP_FIX_BUFFER_PX}px)`, 'important');
+            });
+            root.querySelectorAll('.text-part').forEach(el => {
+                el.dataset[WRAP_FIX_DATA_KEY] = el.getAttribute('style') || '';
+                el.style.setProperty('margin-right', `-${WRAP_FIX_BUFFER_PX}px`, 'important');
+            });
+        }
+        function revertWrapFix(root) {
+            root.querySelectorAll('.bubble, .text-part').forEach(el => {
+                if (WRAP_FIX_DATA_KEY in el.dataset) {
+                    const prev = el.dataset[WRAP_FIX_DATA_KEY];
+                    if (prev) el.setAttribute('style', prev);
+                    else el.removeAttribute('style');
+                    delete el.dataset[WRAP_FIX_DATA_KEY];
+                }
+            });
+        }
+
         // Image Save: 화질 옵션(quality) 추가 및 버튼 상태 개별 제어
         async function saveImage(btn, quality) {
-            const widthInput = document.getElementById('cardWidthInput');
             const frame = document.querySelector('.card-frame');
-            const realWidth = parseInt(widthInput.value);
 
             // 클릭된 버튼의 텍스트를 잠시 로딩 상태로 변경
             const originalText = btn.innerText;
@@ -3729,22 +3758,26 @@ __ __: 글자 1단계 작게
             // 화질 설정: 고화질이면 2, 기본이면 1
             const ratio = (quality === 'high') ? 2 : 1;
 
-            // [TEST] modern-screenshot. pixelRatio → scale, toPng → toBlob 로 변경.
+            // [v1.9.5] 줄바꿈 보정:
+            // 이전 버전은 cardWidthInput.value 를 그대로 width 로 넘기고 style 에서도 width/minWidth/maxWidth 를
+            // px 정수로 강제 주입했다. 그 결과 라이브 .card-frame 의 실제 렌더링 폭과 캡처본의 안쪽 콘텐츠 폭이
+            // 미세하게 어긋나서 말풍선 마지막 단어가 다음 줄로 밀리는 현상이 있었다.
+            // → 실제 레이아웃 폭(offsetWidth)을 사용하고 style 의 width 강제는 제거.
+            //    주의: getBoundingClientRect() 는 CSS transform(줌) 적용 시 스케일된 값을 반환해 잘림 발생 → offsetWidth 로 감.
+            const captureWidth = frame.offsetWidth;
+            const captureHeight = frame.scrollHeight;
+
             const renderOptions = {
                 scale: ratio,
-                width: realWidth,
-                height: frame.scrollHeight,
+                width: captureWidth,
+                height: captureHeight,
                 style: {
-                    width: realWidth + 'px',
-                    minWidth: realWidth + 'px',
-                    maxWidth: realWidth + 'px',
                     height: 'auto',
                     transform: 'none',
                     margin: '0',
                     display: 'block',
-                    boxSizing: 'border-box',
-                    whiteSpace: 'normal',
                     overflow: 'visible'
+                    // width/minWidth/maxWidth/boxSizing/whiteSpace 는 라이브 요소의 계산값을 그대로 신뢰
                 }
             };
 
@@ -3755,6 +3788,9 @@ __ __: 글자 1단계 작게
                 console.log('[modern-screenshot] font set changed → invalidating cache');
                 cachedFontCssText = null;
             }
+
+            // [v1.9.5] 캡처 직전 줄바꿈 보정 인라인 스타일 주입. finally 에서 반드시 원복.
+            applyWrapFix(frame);
 
             try {
                 let blob;
@@ -3798,6 +3834,9 @@ __ __: 글자 1단계 작게
                 console.error('Capture failed:', err);
                 alert("이미지 저장에 실패했습니다. 다시 시도해주세요.");
                 btn.innerText = originalText;
+            } finally {
+                // [v1.9.5] 성공·실패 무관하게 인라인 보정 스타일 원복
+                revertWrapFix(frame);
             }
         }
 
